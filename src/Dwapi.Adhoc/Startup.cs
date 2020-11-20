@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveQueryBuilder.Web.Core;
+using ActiveQueryBuilder.Web.Server.Infrastructure.Providers;
+using Dwapi.Adhoc.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,16 +16,32 @@ namespace Dwapi.Adhoc
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
+        public IWebHostEnvironment Environment { get; }
         public IConfiguration Configuration { get; }
+        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(environment.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+
+            Configuration = builder.Build();
+            Environment = environment;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Active Query Builder requires support for Session HttpContext.
+            services.AddSession();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            // Register providers
+            services.AddScoped<IQueryBuilderProvider, QueryBuilderSqLiteStoreProvider>();
+            services.AddScoped<IQueryTransformerProvider, QueryTransformerSqliteStoreProvider>();
+
+            services.AddActiveQueryBuilder();
             services.AddControllersWithViews();
         }
 
@@ -36,6 +56,13 @@ namespace Dwapi.Adhoc
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            // Active Query Builder requires support for Session HttpContext.
+            app.UseSession();
+
+            // Active Query Builder server requests handler.
+            app.UseActiveQueryBuilder();
+
             app.UseStaticFiles();
 
             app.UseRouting();

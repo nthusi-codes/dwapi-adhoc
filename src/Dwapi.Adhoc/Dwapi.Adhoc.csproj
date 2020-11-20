@@ -4,4 +4,64 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.113.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ActiveQueryBuilder.Core, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.DB2MetadataProvider, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.DB2MetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.FirebirdMetadataProvider, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.FirebirdMetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.MSSQLMetadataProvider, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.MSSQLMetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.MySQLMetadataProvider, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.MySQLMetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.ODBCMetadataProvider, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.ODBCMetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.OracleNativeMetadataProvider, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.OracleNativeMetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.PostgreSQLMetadataProvider, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.PostgreSQLMetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.SQLiteMetadataProvider, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.SQLiteMetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.UniversalMetadataProvider, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.UniversalMetadataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.View, Version=3.7.5.1179, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.View.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.Web.Core.NETCore, Version=3.7.5.423, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.Web.Core.NETCore.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiveQueryBuilder.Web.Server.NETCore, Version=3.7.5.423, Culture=neutral, PublicKeyToken=49d051b90653c7f4">
+      <HintPath>..\..\libs\ActiveQueryBuilder.Web.Server.NETCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="source.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\SimpleDemo\Index.cshtml" />
+  </ItemGroup>
+
 </Project>
