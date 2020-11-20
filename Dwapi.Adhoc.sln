@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dwapi.Adhoc", "src\Dwapi.Adhoc\Dwapi.Adhoc.csproj", "{52421060-98FB-48B3-A4FD-7E7D3BE4C26A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dwapi.Adhoc.Tests", "test\Dwapi.Adhoc.Tests\Dwapi.Adhoc.Tests.csproj", "{B45CF7E2-F1CD-46F5-8BA6-4DCAAEDA5854}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52421060-98FB-48B3-A4FD-7E7D3BE4C26A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52421060-98FB-48B3-A4FD-7E7D3BE4C26A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52421060-98FB-48B3-A4FD-7E7D3BE4C26A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52421060-98FB-48B3-A4FD-7E7D3BE4C26A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B45CF7E2-F1CD-46F5-8BA6-4DCAAEDA5854}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B45CF7E2-F1CD-46F5-8BA6-4DCAAEDA5854}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B45CF7E2-F1CD-46F5-8BA6-4DCAAEDA5854}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B45CF7E2-F1CD-46F5-8BA6-4DCAAEDA5854}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {63240274-F923-45E3-8F97-397F1384650A}
+	EndGlobalSection
+EndGlobal
