@@ -62,6 +62,8 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\SimpleDemo\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Content\json.json" />
+    <_ContentIncludedByDefault Remove="Content\plugins\Pivot\datim.json" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿﻿@{
+﻿@using ActiveQueryBuilder.Web.Server.Markup
+﻿@{
     ViewBag.Title = "Display Query Results Demo";
 }
 
@@ -18,6 +19,7 @@
     <ul>
         <li><a href="#qb">Query Builder</a></li>
         <li><a href="#qr">Query Results</a></li>
+        <li><a href="#pv">Pivot Results</a></li>
     </ul>
     <div class="row" id="qb">
         <div class="col-md-12">
@@ -52,10 +54,10 @@
         <div class="col-md-3">
             <table class="table table-striped table-params">
                 <thead>
-                    <tr>
-                        <th scope="col">Parameter</th>
-                        <th scope="col">Value</th>
-                    </tr>
+                <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">Value</th>
+                </tr>
                 </thead>
                 <tbody></tbody>
             </table>
@@ -68,21 +70,27 @@
         </div>
         <div class="col-md-12">
             <div class="alert alert-danger"></div>
-            <a class="link-to-grid-site" href="http://js-grid.com">http://js-grid.com</a>
             <div id="jsgrid"></div>
         </div>
     </div>
+      <div class="row" id="pv">
+            <div class="col-md-12">
+                <div class="alert alert-danger"></div>
+                <div id="flexm">Pivot Resluts...</div>
+            </div>
+        </div>
 </div>
 
 @section styles {
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+    <link type="text/css" rel="stylesheet" href="./flexmonster/flexmonster.css" />
 
     <style>
         #main-tabs {
-            margin-top: 5px;     
+            margin-top: 5px;
         }
-        
+
         #qb, #qr {
             padding: 5px;
         }
@@ -111,10 +119,13 @@
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
     <script src="./aqb.client.js"></script>
-    
+    <script src="./flexmonster/flexmonster.js"></script>
     <script>
         // Instance identifier string to bind to the QueryBuilder component on the server side. See the CreateQueryBuilderController.cs code for details.
+
         var instanceId = 'QueryResults';
+         var jsonData=[];
+
 
         $(function () {
             AQB.Web.UI.QueryBuilder(instanceId, $('#query-builder'));
@@ -132,6 +143,20 @@
             $('#second-tabs').tabs();
             $('[href="#qr"]').click(onOpenQueryResults);
             AQB.Web.onCriteriaBuilderReady(subscribeToChanges);
+             $('[href="#pv"]').click(function (){
+                 console.log('sss');
+                   var pivot = new Flexmonster({
+                             container: "flexm",
+                             licenseKey: "Z7LN-XHF564-1W5V0U-110C36-6P4M3G-4W2T6H-5S1W5B-5E2V4A-3F5U37",
+                             componentFolder: "flexmonster/",
+                             toolbar: true,
+                               report: {
+                                     dataSource: {
+                             	        data: jsonData
+                             	    }
+                                 }
+                         });
+             });
         });
 
         function onOpenQueryResults() {
@@ -219,7 +244,7 @@
                     datafield: c.ResultName
                 }
             });
-            
+
             createJsGrid(columns);
         }
 
@@ -254,6 +279,9 @@
                                 data: res,
                                 itemsCount: 9999999
                             });
+
+                            jsonData=res;
+
                         }).fail(errorCallback);
 
                         return d.promise();
