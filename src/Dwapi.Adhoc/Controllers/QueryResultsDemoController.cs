@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using ActiveQueryBuilder.Core.QueryTransformer;
@@ -11,7 +12,7 @@ namespace Dwapi.Adhoc.Controllers
 {
     public class QueryResultsDemoController : Controller
     {
-        private string instanceId = "QueryResults";
+        private string _instanceId = "QueryResults";
 
         private readonly IQueryBuilderService _aqbs;
         private readonly IQueryTransformerService _qts;
@@ -29,9 +30,10 @@ namespace Dwapi.Adhoc.Controllers
             return View();
         }
 
-        public ActionResult GetData(GridModel m)
+        public ActionResult GetData([FromBody] GridModel m)
         {
-            var qt = _qts.Get(instanceId);
+
+            var qt = _qts.Get(m.InstanceId);
 
             qt.Skip((m.Pagenum * m.Pagesize).ToString());
             qt.Take(m.Pagesize == 0 ? "" : m.Pagesize.ToString());
@@ -50,6 +52,11 @@ namespace Dwapi.Adhoc.Controllers
             }
 
             return GetData(qt, m.Params);
+        }
+
+        public ActionResult GetFlexData(string instanceId)
+        {
+            return GetData(new GridModel() {InstanceId = instanceId});
         }
 
         private ActionResult GetData(QueryTransformer qt, Param[] _params)
@@ -72,14 +79,14 @@ namespace Dwapi.Adhoc.Controllers
             }
         }
 
-        public void LoadQuery(string query)
+        public void LoadQuery(string query,string instanceId)
         {
             var qb = _aqbs.Get(instanceId);
 
             if (query == "artist")
-                qb.SQL = "Select * From Patients";
+                qb.SQL = "Select * From DimDate";
             else
-                qb.SQL = "Select * From Patients";
+                qb.SQL = "Select * From DimDate";
 
             _aqbs.Put(qb);
         }
@@ -92,6 +99,7 @@ namespace Dwapi.Adhoc.Controllers
         public string Sortdatafield { get; set; }
         public string Sortorder { get; set; }
         public Param[] Params { get; set; }
+        public string InstanceId { get; set; } = "QueryResults";
     }
 
     public class Param

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ActiveQueryBuilder.Web.Core;
 using ActiveQueryBuilder.Web.Server.Infrastructure.Providers;
 using Dwapi.Adhoc.Providers;
+using Flexmonster.DataServer.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -38,11 +39,15 @@ namespace Dwapi.Adhoc
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Register providers
-            services.AddScoped<IQueryBuilderProvider, QueryBuilderSqLiteStoreProvider>();
-            services.AddScoped<IQueryTransformerProvider, QueryTransformerSqliteStoreProvider>();
+            services.AddScoped<IQueryBuilderProvider, QueryBuilderMsSqlStoreProvider>();
+            services.AddScoped<IQueryTransformerProvider, QueryTransformerMsSqlStoreProvider>();
 
             services.AddActiveQueryBuilder();
+            services.ConfigureFlexmonsterOptions(Configuration);
+            services.AddFlexmonsterApi();
             services.AddControllersWithViews();
+            services.AddCors();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,7 +72,14 @@ namespace Dwapi.Adhoc
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            // app.UseAuthorization();
+
+            // other configurations
+            app.UseCors(builder => {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            });
+
+
 
             app.UseEndpoints(endpoints =>
             {

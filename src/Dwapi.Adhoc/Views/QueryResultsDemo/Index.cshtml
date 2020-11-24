@@ -124,8 +124,26 @@
         // Instance identifier string to bind to the QueryBuilder component on the server side. See the CreateQueryBuilderController.cs code for details.
 
         var instanceId = 'QueryResults';
-         var jsonData=[];
 
+         function uuidv4() {
+           return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+             return v.toString(16);
+           });
+         }
+         function getInstance(){
+             var qbI=localStorage.getItem('_dwhAQBToken');
+             if (qbI&&qbI.length>30){
+                 instanceId=qbI;
+                 }
+            else {
+
+                 instanceId=uuidv4();
+                 localStorage.setItem('_dwhAQBToken',instanceId);
+                 }
+          }
+
+          getInstance();
 
         $(function () {
             AQB.Web.UI.QueryBuilder(instanceId, $('#query-builder'));
@@ -144,7 +162,10 @@
             $('[href="#qr"]').click(onOpenQueryResults);
             AQB.Web.onCriteriaBuilderReady(subscribeToChanges);
              $('[href="#pv"]').click(function (){
-                 console.log('sss');
+
+                    var jsonDataz = "http://localhost:5000/QueryResultsDemo/GetFlexData?instanceId=" + instanceId;
+
+                    console.log(jsonDataz);
                    var pivot = new Flexmonster({
                              container: "flexm",
                              licenseKey: "Z7LN-XHF564-1W5V0U-110C36-6P4M3G-4W2T6H-5S1W5B-5E2V4A-3F5U37",
@@ -152,7 +173,8 @@
                              toolbar: true,
                                report: {
                                      dataSource: {
-                             	        data: jsonData
+                                          dataSourceType: "json",
+                                         filename: jsonDataz
                              	    }
                                  }
                          });
@@ -272,16 +294,14 @@
                                 pagesize: filter.pageSize,
                                 sortdatafield: filter.sortField,
                                 sortorder: filter.sortOrder,
-                                params: getParams()
+                                params: getParams(),
+                                instanceId: instanceId
                             })
                         }).done(function (res) {
                             d.resolve({
                                 data: res,
                                 itemsCount: 9999999
                             });
-
-                            jsonData=res;
-
                         }).fail(errorCallback);
 
                         return d.promise();
@@ -311,7 +331,8 @@
                 url: 'QueryResultsDemo/LoadQuery',
                 type: 'POST',
                 data: {
-                    query: name
+                    query: name,
+                    instanceId: instanceId
                 }
             }).done(function () {
                 AQB.Web.QueryBuilder.update();

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Data.SQLite;
 using Dwapi.Adhoc.Controllers;
 
@@ -86,6 +87,11 @@ namespace Dwapi.Adhoc.Helpers
             var connectionString = string.Format("Data Source={0};Version=3;", filePath);
 
             return new SQLiteConnection(connectionString);
+        }
+
+        public static IDbConnection CreateMsSqlConnection(string connectionString)
+        {
+            return new SqlConnection(connectionString);
         }
     }
 }
