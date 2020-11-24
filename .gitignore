@@ -339,3 +339,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /src/Dwapi.Adhoc/logs/
+.DS_Store
