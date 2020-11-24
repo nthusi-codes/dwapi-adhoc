@@ -62,7 +62,6 @@ namespace Dwapi.Adhoc.Providers
                 Console.WriteLine(e);
                 throw;
             }
-
             return qb;
         }
 
@@ -92,6 +91,9 @@ namespace Dwapi.Adhoc.Providers
         {
             var sql = string.Format("delete from QueryBuilders where id = {0}", id);
             ExecuteNonQuery(sql);
+        }
+
+        public void RefreshMetadata(){
         }
 
         private void Insert(QueryBuilder qb)

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
   </PropertyGroup>
 
   <ItemGroup>
@@ -60,12 +61,20 @@
     <None Update="source.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="metas\portaldev.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\SimpleDemo\Index.cshtml" />
     <_ContentIncludedByDefault Remove="Content\json.json" />
     <_ContentIncludedByDefault Remove="Content\plugins\Pivot\datim.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="metas" />
   </ItemGroup>
 
 </Project>

@@ -1,25 +1,16 @@
 ﻿@using ActiveQueryBuilder.Web.Server.Markup
+@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 ﻿@{
-    ViewBag.Title = "Display Query Results Demo";
+    ViewBag.Title = "National Data Warehouse";
 }
 
-<div class="row">
-    <div class="col-md-12">
-        <h1>Display Query Results Demo</h1>
-        <p>Displaying SQL query results and modifying SQL queries while browsing the data.</p>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <a href="#" class="btn btn-primary" onclick="loadQuery('artist');">Artist</a>
-        <a href="#" class="btn btn-primary"  onclick="loadQuery('track');">Track</a>
-    </div>
-</div>
-<div id="main-tabs" class="block-flat">
-    <ul>
-        <li><a href="#qb">Query Builder</a></li>
-        <li><a href="#qr">Query Results</a></li>
-        <li><a href="#pv">Pivot Results</a></li>
+<div id="main-tabs">
+    <ul class="nav nav-tabs">
+        <li><a class="nav-link active" href="#qb">Step 1 - Build Query</a></li>
+        <li><a class="nav-link" href="#qr">Step 2 - View Results</a></li>
+        <li><a class="nav-link" href="#pv">Step 3 -Pivot Results</a></li>
     </ul>
     <div class="row" id="qb">
         <div class="col-md-12">
@@ -120,237 +111,235 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
     <script src="./aqb.client.js"></script>
     <script src="./flexmonster/flexmonster.js"></script>
+     <script src="./js/app-utils.js"></script>
     <script>
-        // Instance identifier string to bind to the QueryBuilder component on the server side. See the CreateQueryBuilderController.cs code for details.
 
+        var baseUrl="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")"
+        var flexKey="@Configuration["FlexKey"]"
         var instanceId = 'QueryResults';
 
          function uuidv4() {
-           return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-             return v.toString(16);
-           });
-         }
-         function getInstance(){
-             var qbI=localStorage.getItem('_dwhAQBToken');
-             if (qbI&&qbI.length>30){
-                 instanceId=qbI;
-                 }
-            else {
-
-                 instanceId=uuidv4();
-                 localStorage.setItem('_dwhAQBToken',instanceId);
-                 }
-          }
-
-          getInstance();
-
-        $(function () {
-            AQB.Web.UI.QueryBuilder(instanceId, $('#query-builder'));
-            AQB.Web.UI.ObjectTreeView(instanceId, $('#tree-view'));
-            AQB.Web.UI.SubQueryNavigationBar(instanceId, $('#navbar'));
-            AQB.Web.UI.Canvas(instanceId, $('#query-builder-canvas'));
-            AQB.Web.UI.StatusBar(instanceId, $('#statusbar'));
-            AQB.Web.UI.Grid(instanceId, $('#grid'), { orColumnCount: 0 });
-            AQB.Web.UI.SqlEditor(instanceId, $('#sql-editor'));
-            AQB.Web.UI.CriteriaBuilder(instanceId, $('#criteria-builder'));
-
-            AQB.Web.UI.startApplication(instanceId);
-
-            $('#main-tabs').tabs();
-            $('#second-tabs').tabs();
-            $('[href="#qr"]').click(onOpenQueryResults);
-            AQB.Web.onCriteriaBuilderReady(subscribeToChanges);
-             $('[href="#pv"]').click(function (){
-
-                    var jsonDataz = "http://localhost:5000/QueryResultsDemo/GetFlexData?instanceId=" + instanceId;
-
-                    console.log(jsonDataz);
-                   var pivot = new Flexmonster({
-                             container: "flexm",
-                             licenseKey: "Z7LN-XHF564-1W5V0U-110C36-6P4M3G-4W2T6H-5S1W5B-5E2V4A-3F5U37",
-                             componentFolder: "flexmonster/",
-                             toolbar: true,
-                               report: {
-                                     dataSource: {
-                                          dataSourceType: "json",
-                                         filename: jsonDataz
-                             	    }
-                                 }
-                         });
+             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                 return v.toString(16);
              });
-        });
+         }
 
-        function onOpenQueryResults() {
-            var cb = AQB.Web.CriteriaBuilderContainer.first();
+         function getInstance() {
+             var qbI = localStorage.getItem('_dwhAQBToken');
+             if (qbI && qbI.length > 30) {
+                 instanceId = qbI;
+             } else {
 
-            onCriteriaBuilderChanged(cb,
-                function () {
-                    var params = getUniqueQueryParams();
-                    clearParams();
+                 instanceId = uuidv4();
+                 localStorage.setItem('_dwhAQBToken', instanceId);
+             }
+         }
 
-                    if (params.length) {
-                        $("#jsgrid").jsGrid('destroy');
-                        createParams(params);
-                    } else {
-                        createGrids();
-                    }
-                });
-        };
+         getInstance();
 
-        function subscribeToChanges(cb) {
-            cb.loadColumns();
+         $(function () {
+             AQB.Web.UI.QueryBuilder(instanceId, $('#query-builder'));
+             AQB.Web.UI.ObjectTreeView(instanceId, $('#tree-view'));
+             AQB.Web.UI.SubQueryNavigationBar(instanceId, $('#navbar'));
+             AQB.Web.UI.Canvas(instanceId, $('#query-builder-canvas'));
+             AQB.Web.UI.StatusBar(instanceId, $('#statusbar'));
+             AQB.Web.UI.Grid(instanceId, $('#grid'), {orColumnCount: 0});
+             AQB.Web.UI.SqlEditor(instanceId, $('#sql-editor'));
+             AQB.Web.UI.CriteriaBuilder(instanceId, $('#criteria-builder'));
+             AQB.Web.UI.startApplication(instanceId);
 
-            cb.on(cb.Events.CriteriaBuilderChanged,
-                function () {
-                    onCriteriaBuilderChanged(cb, updateGrids);
-                });
-        }
+             $('#main-tabs').tabs();
+             $('#second-tabs').tabs();
+             $('[href="#qr"]').click(onOpenQueryResults);
+             AQB.Web.onCriteriaBuilderReady(subscribeToChanges);
+             $('[href="#pv"]').click(function () {
+                 var jsonDataz = baseUrl + "/GetFlexData?instanceId=" + instanceId;
+                 var pivot = new Flexmonster({
+                     container: "flexm",
+                     licenseKey: flexKey,
+                     componentFolder: "flexmonster/",
+                     toolbar: true,
+                     report: {
+                         dataSource: {
+                             dataSourceType: "json",
+                             filename: jsonDataz
+                         }
+                     }
+                 });
+             });
+         });
 
-        function onCriteriaBuilderChanged(cb, callback) {
-            cb.transformSql(function (sql) {
-                $('.sql').text(sql);
-                callback();
-            });
-        }
+         function onOpenQueryResults() {
+             var cb = AQB.Web.CriteriaBuilderContainer.first();
 
-        function createParams(params) {
-            var table = $('.table-params tbody');
+             onCriteriaBuilderChanged(cb,
+                 function () {
+                     var params = getUniqueQueryParams();
+                     clearParams();
 
-            for (var i = 0; i < params.length; i++) {
-                var tr = $('<tr>');
-                var name = $('<td>' + params[i].FullName + '</td>');
-                var value = $('<td><input type="text" class="' + params[i].Name + '" /></td>');
-                tr.append(name).append(value);
-                table.append(tr);
-            }
+                     if (params.length) {
+                         $("#jsgrid").jsGrid('destroy');
+                         createParams(params);
+                     } else {
+                         createGrids();
+                     }
+                 });
+         };
 
-            $('.table-params').show();
-            $('.execute').show();
-        }
+         function subscribeToChanges(cb) {
+             cb.loadColumns();
 
-        function clearParams() {
-            $('.table-params tbody').empty();
-            $('.execute').hide();
-            $('.table-params').hide();
-        }
+             cb.on(cb.Events.CriteriaBuilderChanged,
+                 function () {
+                     onCriteriaBuilderChanged(cb, updateGrids);
+                 });
+         }
 
-        function getParams() {
-            var result = [];
-            var params = getUniqueQueryParams();
+         function onCriteriaBuilderChanged(cb, callback) {
+             cb.transformSql(function (sql) {
+                 $('.sql').text(sql);
+                 callback();
+             });
+         }
 
-            for (var i = 0; i < params.length; i++) {
-                result.push({
-                    Name: params[i].FullName,
-                    Value: $('input.' + params[i].Name).val()
-                });
-            }
+         function createParams(params) {
+             var table = $('.table-params tbody');
 
-            return result;
-        }
+             for (var i = 0; i < params.length; i++) {
+                 var tr = $('<tr>');
+                 var name = $('<td>' + params[i].FullName + '</td>');
+                 var value = $('<td><input type="text" class="' + params[i].Name + '" /></td>');
+                 tr.append(name).append(value);
+                 table.append(tr);
+             }
 
-        function updateGrids() {
-            $('.alert-danger').hide();
-            datagrid.jsGrid();
-        }
+             $('.table-params').show();
+             $('.execute').show();
+         }
 
-        function createGrids() {
-            $('.alert-danger').hide();
-            var cb = AQB.Web.CriteriaBuilder;
+         function clearParams() {
+             $('.table-params tbody').empty();
+             $('.execute').hide();
+             $('.table-params').hide();
+         }
 
-            var columns = cb.Columns.map(function (c) {
-                return {
-                    key: c.ResultName,
-                    name: c.ResultName,
-                    text: c.ResultName,
-                    datafield: c.ResultName
-                }
-            });
+         function getParams() {
+             var result = [];
+             var params = getUniqueQueryParams();
 
-            createJsGrid(columns);
-        }
+             for (var i = 0; i < params.length; i++) {
+                 result.push({
+                     Name: params[i].FullName,
+                     Value: $('input.' + params[i].Name).val()
+                 });
+             }
 
-        function createJsGrid(columns) {
-            window.datagrid = $("#jsgrid").jsGrid({
-                width: "100%",
-                height: "400px",
-                sorting: true,
-                paging: true,
-                pageLoading: true,
-                pageSize: 10,
-                autoload: true,
-                fields: columns,
-                controller: {
-                    loadData: function (filter) {
-                        var d = $.Deferred();
+             return result;
+         }
 
-                        $.ajax({
-                            url: 'QueryResultsDemo/GetData',
-                            type: 'POST',
-                            contentType: 'application/json;',
-                            dataType: 'json',
-                            data: JSON.stringify({
-                                pagenum: filter.pageIndex - 1,
-                                pagesize: filter.pageSize,
-                                sortdatafield: filter.sortField,
-                                sortorder: filter.sortOrder,
-                                params: getParams(),
-                                instanceId: instanceId
-                            })
-                        }).done(function (res) {
-                            d.resolve({
-                                data: res,
-                                itemsCount: 9999999
-                            });
-                        }).fail(errorCallback);
+         function updateGrids() {
+             $('.alert-danger').hide();
+             datagrid.jsGrid();
+         }
 
-                        return d.promise();
-                    }
-                }
-            });
+         function createGrids() {
+             $('.alert-danger').hide();
+             var cb = AQB.Web.CriteriaBuilder;
 
-            $('jsgrid-header-cell').click(function () {
-                var field = this.innerText;
-                $("#jsgrid").jsGrid("sort", field);
-            });
-        }
+             var columns = cb.Columns.map(function (c) {
+                 return {
+                     key: c.ResultName,
+                     name: c.ResultName,
+                     text: c.ResultName,
+                     datafield: c.ResultName
+                 }
+             });
 
-        $('.execute').click(function () {
-            if (window.datagrid)
-                updateGrids();
-            else
-                createGrids();
-        });
+             createJsGrid(columns);
+         }
 
-        function errorCallback(xhr, error, statusText) {
-            $('.alert-danger').show().text(statusText);
-        }
+         function createJsGrid(columns) {
+             window.datagrid = $("#jsgrid").jsGrid({
+                 width: "100%",
+                 height: "400px",
+                 sorting: true,
+                 paging: true,
+                 pageLoading: true,
+                 pageSize: 10,
+                 autoload: true,
+                 fields: columns,
+                 controller: {
+                     loadData: function (filter) {
+                         var d = $.Deferred();
 
-        function loadQuery(name) {
-            $.ajax({
-                url: 'QueryResultsDemo/LoadQuery',
-                type: 'POST',
-                data: {
-                    query: name,
-                    instanceId: instanceId
-                }
-            }).done(function () {
-                AQB.Web.QueryBuilder.update();
-            }).fail(errorCallback);
-        }
+                         $.ajax({
+                             url: 'QueryResultsDemo/GetData',
+                             type: 'POST',
+                             contentType: 'application/json;',
+                             dataType: 'json',
+                             data: JSON.stringify({
+                                 pagenum: filter.pageIndex - 1,
+                                 pagesize: filter.pageSize,
+                                 sortdatafield: filter.sortField,
+                                 sortorder: filter.sortOrder,
+                                 params: getParams(),
+                                 instanceId: instanceId
+                             })
+                         }).done(function (res) {
+                             d.resolve({
+                                 data: res,
+                                 itemsCount: 9999999
+                             });
+                         }).fail(errorCallback);
 
-        function getUniqueQueryParams() {
-            var params = AQB.Web.QueryBuilder.queryParams;
-            var result = [];
+                         return d.promise();
+                     }
+                 }
+             });
 
-            for (var i = 0, l = params.length; i < l; i++) {
-                var param = params[i];
+             $('jsgrid-header-cell').click(function () {
+                 var field = this.innerText;
+                 $("#jsgrid").jsGrid("sort", field);
+             });
+         }
 
-                if (result.find(r => r.FullName === param.FullName) == null)
-                    result.push(param);
-            }
+         $('.execute').click(function () {
+             if (window.datagrid)
+                 updateGrids();
+             else
+                 createGrids();
+         });
 
-            return result;
-        }
+         function errorCallback(xhr, error, statusText) {
+             $('.alert-danger').show().text(statusText);
+         }
+
+         function loadQuery(name) {
+             $.ajax({
+                 url: 'QueryResultsDemo/LoadQuery',
+                 type: 'POST',
+                 data: {
+                     query: name,
+                     instanceId: instanceId
+                 }
+             }).done(function () {
+                 AQB.Web.QueryBuilder.update();
+             }).fail(errorCallback);
+         }
+
+         function getUniqueQueryParams() {
+             var params = AQB.Web.QueryBuilder.queryParams;
+             var result = [];
+
+             for (var i = 0, l = params.length; i < l; i++) {
+                 var param = params[i];
+
+                 if (result.find(r => r.FullName === param.FullName) == null)
+                     result.push(param);
+             }
+
+             return result;
+         }
     </script>
 }

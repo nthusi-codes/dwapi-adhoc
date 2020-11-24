@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
 using ActiveQueryBuilder.Core.QueryTransformer;
 using ActiveQueryBuilder.Web.Server.Services;
 using Dwapi.Adhoc.Helpers;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Dwapi.Adhoc.Controllers
 {
@@ -16,13 +19,15 @@ namespace Dwapi.Adhoc.Controllers
 
         private readonly IQueryBuilderService _aqbs;
         private readonly IQueryTransformerService _qts;
+        private readonly IConfiguration _configuration;
 
         // Use IQueryBuilderService to get access to the server-side instances of Active Query Builder objects.
         // See the registration of this service in the Startup.cs.
-        public QueryResultsDemoController(IQueryBuilderService aqbs, IQueryTransformerService qts)
+        public QueryResultsDemoController(IQueryBuilderService aqbs, IQueryTransformerService qts,IConfiguration configuration)
         {
             _aqbs = aqbs;
             _qts = qts;
+            _configuration = configuration;
         }
 
         public ActionResult Index()
@@ -61,7 +66,8 @@ namespace Dwapi.Adhoc.Controllers
 
         private ActionResult GetData(QueryTransformer qt, Param[] _params)
         {
-            var conn = qt.Query.SQLContext.MetadataProvider.Connection;
+            // var conn = qt.Query.SQLContext.MetadataProvider.Connection;
+            var conn = new SqlConnection(_configuration.GetConnectionString("SourceConnection"));
             var sql = qt.SQL;
 
             if (_params != null)
@@ -90,6 +96,8 @@ namespace Dwapi.Adhoc.Controllers
 
             _aqbs.Put(qb);
         }
+
+
     }
 
     public class GridModel

@@ -41,12 +41,17 @@ namespace Dwapi.Adhoc
             // Register providers
             services.AddScoped<IQueryBuilderProvider, QueryBuilderMsSqlStoreProvider>();
             services.AddScoped<IQueryTransformerProvider, QueryTransformerMsSqlStoreProvider>();
+            services.AddScoped<IAdhocManager, AdhocManager>();
 
             services.AddActiveQueryBuilder();
-            services.ConfigureFlexmonsterOptions(Configuration);
-            services.AddFlexmonsterApi();
+           // services.ConfigureFlexmonsterOptions(Configuration);
+            // services.AddFlexmonsterApi();
             services.AddControllersWithViews();
             services.AddCors();
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = long.MaxValue;
+            });
 
         }
 

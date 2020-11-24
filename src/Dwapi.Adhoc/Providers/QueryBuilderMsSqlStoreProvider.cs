@@ -7,6 +7,7 @@ using ActiveQueryBuilder.Web.Server.Infrastructure.Providers;
 using Dwapi.Adhoc.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace Dwapi.Adhoc.Providers
 {
@@ -47,17 +48,30 @@ create table QueryBuilders
         /// <returns></returns>
         public QueryBuilder Get(string id)
         {
-            var qb = new QueryBuilder(id) { SyntaxProvider = new MSSQLSyntaxProvider() };
-
-            // Turn this property on to suppress parsing error messages when user types non-SELECT statements in the text editor.
-            qb.BehaviorOptions.AllowSleepMode = false;
-
-            // Bind Active Query Builder to a live database connection.
-            qb.MetadataProvider = new MSSQLMetadataProvider()
+            var qb = new QueryBuilder(id)
             {
-                // Assign an instance of DBConnection object to the Connection property.
-                Connection = DataBaseHelper.CreateMsSqlConnection(GetDatabasePath())
+                SyntaxProvider = new MSSQLSyntaxProvider(),
+                BehaviorOptions =
+                {
+                    AllowSleepMode = true
+                }
+                ,
+                MetadataLoadingOptions =
+                {
+                    OfflineMode = true
+                }
             };
+
+            try
+            {
+                qb.MetadataContainer.ImportFromXML(GetMetaDataPath());
+                qb.MetadataStructure.Refresh();
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Instance error:{id}",e);
+                throw;
+            }
 
             var layout = GetLayout(id);
 
@@ -68,16 +82,22 @@ create table QueryBuilders
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error($"Instance error:{id}",e);
                 throw;
             }
-
             return qb;
         }
+
 
         private string GetDatabasePath()
         {
             var con = _config.GetConnectionString("SourceConnection");
+            return con;
+        }
+
+        private string GetMetaDataPath()
+        {
+            var  con= Path.Combine( _env.ContentRootPath,_config["XMLMetadata"]);
             return con;
         }
 
