@@ -21,6 +21,9 @@ namespace Dwapi.Adhoc
     {
         public IWebHostEnvironment Environment { get; }
         public IConfiguration Configuration { get; }
+
+        private static string _authority;
+
         public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             var builder = new ConfigurationBuilder()
@@ -36,6 +39,24 @@ namespace Dwapi.Adhoc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            _authority = Configuration.GetSection("Authority").Value;
+
+            services.AddAuthentication(opt =>
+                {
+                    opt.DefaultScheme = "Cookies";
+                    opt.DefaultChallengeScheme = "oidc";
+                })
+                .AddCookie("Cookies")
+                .AddOpenIdConnect("oidc", opt =>
+                {
+                    opt.SignInScheme = "Cookies";
+                    opt.Authority = _authority;
+                    opt.ClientId = "adhoc-client";
+                    opt.ResponseType = "code id_token";
+                    opt.SaveTokens = true;
+                    opt.ClientSecret = "a79fd782-bd4b-45ac-b13d-03e99d89b186";
+                });
+
             // Active Query Builder requires support for Session HttpContext.
             services.AddSession();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -82,14 +103,13 @@ namespace Dwapi.Adhoc
 
             app.UseRouting();
 
-            // app.UseAuthorization();
-
             // other configurations
             app.UseCors(builder => {
                 builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
             });
 
-
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
