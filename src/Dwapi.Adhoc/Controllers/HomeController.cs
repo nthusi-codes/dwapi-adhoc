@@ -10,11 +10,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Dwapi.Adhoc.Models;
 using Dwapi.Adhoc.Providers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
 namespace Dwapi.Adhoc.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IAdhocManager _adhocManager;
