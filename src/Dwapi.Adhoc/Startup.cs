@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using ActiveQueryBuilder.Web.Core;
 using ActiveQueryBuilder.Web.Server.Infrastructure.Providers;
+using Dwapi.Adhoc.Helpers;
 using Dwapi.Adhoc.Providers;
 using Flexmonster.DataServer.Core;
+using Flexmonster.DataServer.Core.Parsers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -44,9 +46,12 @@ namespace Dwapi.Adhoc
             services.AddScoped<IAdhocManager, AdhocManager>();
 
             services.AddActiveQueryBuilder();
-           // services.ConfigureFlexmonsterOptions(Configuration);
-            // services.AddFlexmonsterApi();
             services.AddControllersWithViews();
+                //.AddJsonOptions(options =>{options.JsonSerializerOptions.IgnoreNullValues = true; });
+            services.ConfigureFlexmonsterOptions(Configuration);
+            services.AddFlexmonsterApi();
+               ;//custom parser must be added as transient
+            // services.AddTransient<IParser, CustomParser>();
             services.AddCors();
             services.Configure<IISServerOptions>(options =>
             {

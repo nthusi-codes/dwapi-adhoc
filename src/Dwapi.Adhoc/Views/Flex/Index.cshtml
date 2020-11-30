@@ -1,0 +1,30 @@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    ViewData["Title"] = "Flex Demo";
+}
+<div class="text-center">
+    <h1 class="display-4">Flexmonster Pivot Table & Charts</h1>
+</div>
+
+<div id="pivotContainer"> </div>
+
+@section scripts {
+    <script src="./flexmonster/flexmonster.js"></script>
+    <script>
+	 var flexKey="@Configuration["FlexKey"]"
+     var pivot = new Flexmonster({
+         container: "pivotContainer",
+         licenseKey: flexKey,
+         componentFolder: "flexmonster/",
+         toolbar: true,
+         report: {
+             dataSource: {
+                 type:"api",
+                 index: "custom-index",
+                 url: "/bigdata"
+             }
+         }
+     });
+    </script>
+}
