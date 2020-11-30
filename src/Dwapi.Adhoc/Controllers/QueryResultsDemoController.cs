@@ -39,7 +39,6 @@ namespace Dwapi.Adhoc.Controllers
 
         public ActionResult GetData([FromBody] GridModel m)
         {
-
             var qt = _qts.Get(m.InstanceId);
 
             qt.Skip((m.Pagenum * m.Pagesize).ToString());
