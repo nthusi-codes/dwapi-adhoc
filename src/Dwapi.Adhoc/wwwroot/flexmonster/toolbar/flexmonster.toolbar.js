@@ -1,17 +1,19 @@
 /** 
- * Flexmonster Pivot Table & Charts v2.7.18 [https://www.flexmonster.com/]
- * Copyright (c) 2019 Flexmonster. All rights reserved.
+ * Flexmonster Pivot Table & Charts [https://www.flexmonster.com/]
+ * November 2020 (v. 2.8.19)
+ * Copyright (c) 2020 Flexmonster. All rights reserved.
  *
  * Flexmonster Pivot Table & Charts commercial licenses may be obtained at
  * https://www.flexmonster.com/pivot-table-editions-and-pricing/
  * If you do not own a commercial license, this file shall be governed by the trial license terms.
  */
-var FlexmonsterToolbar = function (pivotContainer, pivot, _, width, labels, dataSourceType) {
+var FlexmonsterToolbar = function (pivotContainer, pivot, _, width, labels, dataSourceType, accessibility) {
     this.pivot = pivot;
     this.pivotContainer = pivotContainer;
     this.width = (typeof width == "number" || (width.indexOf("px") < 0 && width.indexOf("%") < 0)) ? width + "px" : width;
     this.Labels = labels;
     this.dataSourceType = dataSourceType || 5;
+    this.accessibility = accessibility;
 }
 FlexmonsterToolbar.prototype.getTabs = function () {
     var tabs = [];
@@ -304,8 +306,9 @@ FlexmonsterToolbar.prototype.dispose = function () {
     this.pivotContainer = null;
     this.Labels = null;
     this.dataProvider = null;
+    window.removeEventListener("resize", this._redrawToolbar);
 }
-FlexmonsterToolbar.prototype.responsiveBreakpoints = [700, 580, 520, 450, 400];
+FlexmonsterToolbar.prototype.responsiveBreakpoints = [700];
 FlexmonsterToolbar.prototype.applyToolbarLayoutClasses = function () {
     if (!this.osUtils.isMobile) {
         var _this = this;
@@ -324,106 +327,149 @@ FlexmonsterToolbar.prototype.applyToolbarLayoutClasses = function () {
             });
         };
         addLayoutClasses();
-        window.addEventListener("resize", addLayoutClasses);
     }
 }
 
 FlexmonsterToolbar.prototype.init = function () {
+    var _this = this;
     this.container = this.pivotContainer;
-    this.container.style.position = (this.container.style.position == "") ? "relative" : this.container.style.position;
-    this.toolbarWrapper = document.createElement("div");
-    this.toolbarWrapper.id = "fm-toolbar-wrapper";
-    this.listWrapper = document.createElement("div");
-    this.listWrapper.id = "fm-list-wrapper";
-    this.listWrapper.style.width = "100%";
-    this.toolbarWrapper.style.width = "100%";
-    this.toolbarWrapper.appendChild(this.listWrapper);
-    var toolbar = document.createElement("ul");
 
-    this.addClass(this.toolbarWrapper, "fm-toolbar-ui");
-    toolbar.id = "fm-toolbar";
-    if (!this.osUtils.isMobile) {
-        var rightGroup = document.createElement("div");
-        rightGroup.classList.add("fm-toolbar-group-right");
-        toolbar.appendChild(rightGroup);
+    var createToolbar = function () {
+        _this.container.style.position = (_this.container.style.position == "") ? "relative" : _this.container.style.position;
+        _this.toolbarWrapper = document.createElement("div");
+        _this.toolbarWrapper.id = "fm-toolbar-wrapper";
+        if (_this.accessibility === true) {
+            _this.toolbarWrapper.classList.add("fm-accessibility");
+        }
+
+        _this.listWrapper = document.createElement("div");
+        _this.listWrapper.classList.add("fm-list-wrapper");
+        _this.listWrapper.style.width = "100%";
+        _this.toolbarWrapper.style.width = "100%";
+        _this.toolbarWrapper.appendChild(_this.listWrapper);
+        _this.toolbar = document.createElement("ul");
+
+        _this.addClass(_this.toolbarWrapper, "fm-toolbar-ui");
+        _this.toolbar.id = "fm-toolbar";
+
+        if (!_this.osUtils.isMobile) { //left group and right group is only supported for desktop version
+            var leftGroup = document.createElement("div");
+            leftGroup.classList.add("fm-toolbar-group-left");
+            _this.toolbar.appendChild(leftGroup);
+            var rightGroup = document.createElement("div");
+            rightGroup.classList.add("fm-toolbar-group-right");
+            _this.toolbar.appendChild(rightGroup);
+        }
+
+        createToolbarContentFromTabs(leftGroup, rightGroup, _this.toolbar);
+
+        _this.listWrapper.appendChild(_this.toolbar);
+        _this.container.insertBefore(_this.toolbarWrapper, _this.container.firstChild);
+
+        _this.applyToolbarLayoutClasses();
+
+        if (!_this.osUtils.isMobile && (leftGroup.clientWidth + rightGroup.clientWidth > _this.toolbar.clientWidth)) { //checks if we have enouph space for all tabs
+            //if there is not enouph space we need to redraw toolbar content with all tabs in root for scrolling
+            _this.toolbar.removeChild(leftGroup);
+            _this.toolbar.removeChild(rightGroup);
+            leftGroup = null;
+            rightGroup = null;
+            createToolbarContentFromTabs(leftGroup, rightGroup, _this.toolbar);
+            _this.toolbar.classList.add("fm-scroll-toolbar");
+            //_this.listWrapper.classList.add("fm-scrollable");
+        }
+
+        _this.updateLabels(_this.Labels);
+
+        _this.pivot.on("numberformatting", function (data) {
+            _this.formatCellsHandler(data.measureName);
+        });
+        _this.pivot.on("conditionalformatting", function (data) {
+            _this.conditionalFormattingHandler(data.measureName);
+        });
+
+        if (_this.osUtils.isMobile) {
+            _this.addClass(_this.listWrapper, "fm-mobile");
+        }
     }
 
-    for (var i = 0; i < this.dataProvider.length; i++) {
-        if (this.isDisabled(this.dataProvider[i])) continue;
-        if (this.osUtils.isMobile && this.dataProvider[i].menu != null && this.dataProvider[i].collapse != true) {
-            for (var j = 0; j < this.dataProvider[i].menu.length; j++) {
-                if (this.isDisabled(this.dataProvider[i].menu[j])) continue;
-                toolbar.appendChild(this.createTab(this.dataProvider[i].menu[j]));
-            }
-        } else {
-            var tab = (this.dataProvider[i].divider) ? this.createDivider(this.dataProvider[i]) : this.createTab(this.dataProvider[i]);
-            if (rightGroup && this.dataProvider[i].rightGroup) {
-                rightGroup.appendChild(tab);
+    var createToolbarContentFromTabs = function (leftGroup, rightGroup, toolbar) { //fills toolbar with the defined tabs
+
+        for (var i = 0; i < _this.dataProvider.length; i++) {
+            if (_this.isDisabled(_this.dataProvider[i])) continue;
+            if (_this.osUtils.isMobile && _this.dataProvider[i].menu != null && _this.dataProvider[i].collapse != true) {
+                for (var j = 0; j < _this.dataProvider[i].menu.length; j++) {
+                    if (_this.isDisabled(_this.dataProvider[i].menu[j])) continue;
+                    toolbar.appendChild(_this.createTab(_this.dataProvider[i].menu[j]));
+                }
             } else {
-                toolbar.appendChild(tab);
+                var tab = (_this.dataProvider[i].divider) ? _this.createDivider(_this.dataProvider[i]) : _this.createTab(_this.dataProvider[i]);
+                if (rightGroup && _this.dataProvider[i].rightGroup) {
+                    rightGroup.appendChild(tab);
+                } else if (leftGroup) {
+                    leftGroup.appendChild(tab);
+                } else {
+                    toolbar.appendChild(tab);
+                }
             }
         }
     }
-    this.listWrapper.appendChild(toolbar);
 
-    this.container.insertBefore(this.toolbarWrapper, this.container.firstChild);
-    this.updateLabels(this.Labels);
+    var clear = function () { // clears old toolbar from DOM
+        var oldToolbarWrapper = _this.container.querySelector("#fm-toolbar-wrapper");
+        if (oldToolbarWrapper) {
+            _this.container.removeChild(oldToolbarWrapper);
+            oldToolbarWrapper = null;
+        }
+    }
 
-    this.applyToolbarLayoutClasses();
 
-    var _this = this;
-    this.pivot.on("numberformatting", function (data) {
-        _this.formatCellsHandler(data.measureName);
-    });
-    this.pivot.on("conditionalformatting", function (data) {
-        _this.conditionalFormattingHandler(data.measureName);
-    });
-
-    if (this.osUtils.isMobile) {
-        this.addClass(this.listWrapper, "fm-mobile");
-        if (toolbar.scrollWidth - toolbar.clientWidth > 0) {
-            this.leftScrollButton = document.createElement("div");
-            this.leftScrollButton.id = "fm-left-scroll-button";
-            this.rightScrollButton = document.createElement("div");
-            this.rightScrollButton.id = "fm-right-scroll-button";
-            this.addClass(this.rightScrollButton, "fm-scroll-arrow");
-            this.addClass(this.listWrapper, "fm-one-arrow-scroll");
-            var _this = this;
+    var enableToolbarScrolling = function () { //enables scrolling if possible
+        if (_this.toolbar.scrollWidth - _this.toolbar.clientWidth > 0) {
+            _this.leftScrollButton = document.createElement("div");
+            _this.leftScrollButton.classList.add("fm-left-scroll-button");
+            _this.rightScrollButton = document.createElement("div");
+            _this.rightScrollButton.classList.add("fm-right-scroll-button");
+            _this.addClass(_this.rightScrollButton, "fm-scroll-arrow");
+            _this.addClass(_this.listWrapper, "fm-one-arrow-scroll");
 
             var changeListWrapperWidth = function (option) {
-                if (option == "inc") {
-                    _this.listWrapper.classList.remove("fm-two-arrow-scroll");
-                    _this.listWrapper.classList.add("fm-one-arrow-scroll");
-                } else if (option = "dec") {
+                if (option == "add") {
                     _this.listWrapper.classList.remove("fm-one-arrow-scroll");
                     _this.listWrapper.classList.add("fm-two-arrow-scroll");
+                } else if (option = "remove") {
+                    _this.listWrapper.classList.remove("fm-two-arrow-scroll");
+                    _this.listWrapper.classList.add("fm-one-arrow-scroll");
                 }
             }
 
+            var luft = 40;
+
             var switchScrollArrows = function () {
-                var maxWidth = toolbar.scrollWidth - toolbar.clientWidth;
-                if (toolbar.scrollLeft > 0 && !_this.leftScrollButton.classList.contains("fm-scroll-arrow")) {
-                    changeListWrapperWidth("dec");
+                var maxWidth = _this.toolbar.scrollWidth - _this.toolbar.clientWidth;
+                var epsillon = 0.3;
+
+                if (_this.toolbar.scrollLeft > 0 && !_this.leftScrollButton.classList.contains("fm-scroll-arrow")) {
+                    changeListWrapperWidth("add");
                     _this.addClass(_this.leftScrollButton, "fm-scroll-arrow");
-                } else if (toolbar.scrollLeft == 0 && _this.leftScrollButton.classList.contains("fm-scroll-arrow")) {
-                    changeListWrapperWidth("inc");
+                } else if (_this.toolbar.scrollLeft - luft * epsillon <= 0 && _this.leftScrollButton.classList.contains("fm-scroll-arrow")) {
+                    changeListWrapperWidth("remove");
                     _this.leftScrollButton.classList.remove("fm-scroll-arrow");
                 }
-                if (toolbar.scrollLeft == maxWidth && _this.rightScrollButton.classList.contains("fm-scroll-arrow")) {
-                    changeListWrapperWidth("inc");
+                if (_this.toolbar.scrollLeft + luft * epsillon >= maxWidth && _this.rightScrollButton.classList.contains("fm-scroll-arrow")) {
+                    changeListWrapperWidth("remove");
                     _this.rightScrollButton.classList.remove("fm-scroll-arrow");
-                } else if (toolbar.scrollLeft < maxWidth && !_this.rightScrollButton.classList.contains("fm-scroll-arrow")) {
-                    changeListWrapperWidth("dec");
+                } else if (_this.toolbar.scrollLeft < maxWidth && !_this.rightScrollButton.classList.contains("fm-scroll-arrow")) {
+                    changeListWrapperWidth("add");
                     _this.addClass(_this.rightScrollButton, "fm-scroll-arrow");
                 }
             }
 
             var scrollList = function (direction) {
-                var luft = 40;
                 if (direction == "left") {
-                    toolbar.scrollLeft -= luft;
+                    _this.toolbar.scrollLeft -= luft;
                 } else if (direction == "right") {
-                    toolbar.scrollLeft += luft;
+                    _this.toolbar.scrollLeft += luft;
                 }
                 switchScrollArrows();
             }
@@ -435,17 +481,34 @@ FlexmonsterToolbar.prototype.init = function () {
                 scrollList("right");
             }
 
-            toolbar.onscroll = function () {
+            _this.toolbar.onscroll = function () {
                 switchScrollArrows();
             }
 
-            this.leftScrollButton.onclick = scrollLeft;
-            this.rightScrollButton.onclick = scrollRight;
+            _this.leftScrollButton.onclick = scrollLeft;
+            _this.rightScrollButton.onclick = scrollRight;
 
-            this.toolbarWrapper.insertBefore(this.leftScrollButton, this.toolbarWrapper.firstChild);
-            this.toolbarWrapper.appendChild(this.rightScrollButton);
+            _this.toolbarWrapper.insertBefore(_this.leftScrollButton, _this.toolbarWrapper.firstChild);
+            _this.toolbarWrapper.appendChild(_this.rightScrollButton);
         }
     }
+
+
+    _this._redrawToolbar = function () {
+        clear();
+
+        createToolbar();
+
+        enableToolbarScrolling();
+
+        if (_this.isFullscreen()) {
+            document.querySelector("#fm-tab-fullscreen > a > div").innerHTML = _this.icons.minimize;
+        }
+    }
+
+    _this._redrawToolbar();
+
+    window.addEventListener("resize", _this._redrawToolbar);
 }
 
 // LABELS
@@ -731,7 +794,7 @@ FlexmonsterToolbar.prototype.showConnectToRemoteCSVDialog = function () {
 
     var content = document.createElement("div");
     var textInput = document.createElement("input");
-    textInput.id = "fm-inp-file-url";
+    textInput.classList.add("fm-inp-file-url");
     textInput.type = "text";
     textInput.value = "https://cdn.flexmonster.com/data/data.csv";
     content.appendChild(textInput);
@@ -768,7 +831,7 @@ FlexmonsterToolbar.prototype.showConnectToRemoteJsonDialog = function () {
 
     var content = document.createElement("div");
     var textInput = document.createElement("input");
-    textInput.id = "fm-inp-file-url";
+    textInput.classList.add("fm-inp-file-url");
     textInput.type = "text";
     textInput.value = "https://cdn.flexmonster.com/data/data.json";
     content.appendChild(textInput);
@@ -824,7 +887,7 @@ FlexmonsterToolbar.prototype.showConnectToElasticDialog = function () {
     };
 
     var dialog = this.popupManager.createPopup();
-    dialog.content.id = "fm-popup-olap";
+    dialog.content.classList.add("fm-popup-olap");
     dialog.content.classList.add("fm-popup-w570");
     dialog.setTitle(Labels.connect_elastic_title);
     dialog.setToolbar([{
@@ -855,17 +918,16 @@ FlexmonsterToolbar.prototype.showConnectToElasticDialog = function () {
     row.appendChild(label);
 
     var hostUrlInput = document.createElement("input");
-    hostUrlInput.id = "fm-inp-proxy-url";
     hostUrlInput.type = "text";
     hostUrlInput.classList.add("fm-inp");
+    hostUrlInput.classList.add("fm-inp-proxy-url");
     hostUrlInput.value = "https://olap.flexmonster.com:9200";
     row.appendChild(hostUrlInput);
 
-    var connectBtn = document.createElement("a");
-    connectBtn.id = "fm-btn-connect";
-    connectBtn.setAttribute("href", "javascript:void(0)");
+    var connectBtn = document.createElement("button");
     connectBtn.classList.add("fm-ui-btn");
     connectBtn.classList.add("fm-ui-btn-dark");
+    connectBtn.classList.add("fm-btn-connect");
     this.setText(connectBtn, Labels.connect);
     connectBtn.onclick = onConnectBtnClick;
     row.appendChild(connectBtn);
@@ -881,7 +943,7 @@ FlexmonsterToolbar.prototype.showConnectToElasticDialog = function () {
 
     var select = this.createSelect();
     var indicesList = select.select;
-    indicesList.id = "fm-lst-dsinfo";
+    indicesList.classList.add("fm-lst-dsinfo");
     indicesList.onchange = onIndicesListChange;
     fillList(indicesList, [], Labels.select_index);
     indicesList.disabled = true;
@@ -896,11 +958,7 @@ FlexmonsterToolbar.prototype.showConnectToOLAPDialog = function () {
     var Labels = this.Labels;
     var onConnectBtnClick = function () {
         if (proxyUrlInput.value.length == 0) return;
-        var credentialsCeckBox = self.getElementById("fm-credentials-checkbox");
-        self.pivot.getXMLADataSources(proxyUrlInput.value,
-            dataSourcesHandler,
-            credentialsCeckBox && credentialsCeckBox.checked ? self.getElementById("fm-username-input").value : null,
-            credentialsCeckBox && credentialsCeckBox.checked ? self.getElementById("fm-password-input").value : null);
+        self.pivot.getXMLADataSources(proxyUrlInput.value, dataSourcesHandler);
     };
     var _this = this;
     var dataSourcesHandler = function (dataProvider) {
@@ -911,12 +969,7 @@ FlexmonsterToolbar.prototype.showConnectToOLAPDialog = function () {
         }
     };
     var onOlapDataSourcesListChange = function () {
-        var credentialsCeckBox = self.getElementById("fm-credentials-checkbox");
-        self.pivot.getXMLACatalogs(proxyUrlInput.value,
-            olapDataSourcesList.value,
-            catalogsHandler,
-            credentialsCeckBox && credentialsCeckBox.checked ? self.getElementById("fm-username-input").value : null,
-            credentialsCeckBox && credentialsCeckBox.checked ? self.getElementById("fm-password-input").value : null);
+        self.pivot.getXMLACatalogs(proxyUrlInput.value, olapDataSourcesList.value, catalogsHandler);
     };
     var catalogsHandler = function (dataProvider) {
         if (dataProvider != null && dataProvider.length > 0) {
@@ -924,11 +977,7 @@ FlexmonsterToolbar.prototype.showConnectToOLAPDialog = function () {
         }
     };
     var onOlapCatalogsListChange = function () {
-        var credentialsCeckBox = self.getElementById("fm-credentials-checkbox");
-        self.pivot.getXMLACubes(proxyUrlInput.value, olapDataSourcesList.value, olapCatalogsList.value,
-            cubesHandler,
-            credentialsCeckBox && credentialsCeckBox.checked ? self.getElementById("fm-username-input").value : null,
-            credentialsCeckBox && credentialsCeckBox.checked ? self.getElementById("fm-password-input").value : null);
+        self.pivot.getXMLACubes(proxyUrlInput.value, olapDataSourcesList.value, olapCatalogsList.value, cubesHandler);
     };
     var cubesHandler = function (dataProvider) {
         if (dataProvider != null && dataProvider.length > 0) {
@@ -940,15 +989,12 @@ FlexmonsterToolbar.prototype.showConnectToOLAPDialog = function () {
     };
     var okHandler = function () {
         var provider = self.pivot.getXMLAProviderName(proxyUrlInput.value, '');
-        var credentialsCeckBox = self.getElementById("fm-credentials-checkbox");
         self.pivot.connectTo({
             type: provider,
             proxyUrl: proxyUrlInput.value,
             dataSourceInfo: olapDataSourcesList.value,
             catalog: olapCatalogsList.value,
-            cube: olapCubesList.value,
-            username: credentialsCeckBox && credentialsCeckBox.checked ? self.getElementById("fm-username-input").value : null,
-            password: credentialsCeckBox && credentialsCeckBox.checked ? self.getElementById("fm-password-input").value : null
+            cube: olapCubesList.value
         });
     };
     var fillList = function (list, dataProvider, prompt) {
@@ -966,19 +1012,9 @@ FlexmonsterToolbar.prototype.showConnectToOLAPDialog = function () {
         list.disabled = false;
         list.focus();
     };
-    var onUseCredentialsChange = function () {
-        var cbx = self.getElementById("fm-credentials-checkbox");
-        var useCredentials = !self.hasClass(cbx, "fm-selected");
-        if (useCredentials) {
-            self.addClass(cbx, "fm-selected");
-        } else {
-            self.removeClass(cbx, "fm-selected");
-        }
-        self.getElementById("fm-credentials").style.display = useCredentials ? "inline" : "none";
-    }
 
     var dialog = this.popupManager.createPopup();
-    dialog.content.id = "fm-popup-olap";
+    dialog.content.classList.add("fm-popup-olap");
     dialog.content.classList.add("fm-popup-w570");
     dialog.setTitle(this.osUtils.isMobile ? Labels.connect_olap_mobile : Labels.olap_connection_tool);
     dialog.setToolbar([{
@@ -1009,17 +1045,16 @@ FlexmonsterToolbar.prototype.showConnectToOLAPDialog = function () {
     row.appendChild(label);
 
     var proxyUrlInput = document.createElement("input");
-    proxyUrlInput.id = "fm-inp-proxy-url";
     proxyUrlInput.type = "text";
     proxyUrlInput.classList.add("fm-inp");
-    proxyUrlInput.value = (this.dataSourceType == 3) ? "http://olap.flexmonster.com:8080/mondrian/xmla" : "https://olap.flexmonster.com/olap/msmdpump.dll";
+    proxyUrlInput.classList.add("fm-inp-proxy-url");
+    proxyUrlInput.value = "https://olap.flexmonster.com/olap/msmdpump.dll";
     row.appendChild(proxyUrlInput);
 
-    var connectBtn = document.createElement("a");
-    connectBtn.id = "fm-btn-connect";
-    connectBtn.setAttribute("href", "javascript:void(0)");
+    var connectBtn = document.createElement("button");
     connectBtn.classList.add("fm-ui-btn");
     connectBtn.classList.add("fm-ui-btn-dark");
+    connectBtn.classList.add("fm-btn-connect");
     this.setText(connectBtn, Labels.connect);
     connectBtn.onclick = onConnectBtnClick;
     row.appendChild(connectBtn);
@@ -1035,7 +1070,7 @@ FlexmonsterToolbar.prototype.showConnectToOLAPDialog = function () {
 
     var select = this.createSelect();
     var olapDataSourcesList = select.select;
-    olapDataSourcesList.id = "fm-lst-dsinfo";
+    olapDataSourcesList.classList.add("fm-lst-dsinfo");
     olapDataSourcesList.disabled = true;
     olapDataSourcesList.innerHTML = '<option value="" class="placeholder" disabled selected>' +
         Labels.select_data_source + '</option>';
@@ -1053,7 +1088,7 @@ FlexmonsterToolbar.prototype.showConnectToOLAPDialog = function () {
 
     var select = this.createSelect();
     var olapCatalogsList = select.select;
-    olapCatalogsList.id = "fm-lst-catalogs";
+    olapCatalogsList.classList.add("fm-lst-catalogs");
     olapCatalogsList.disabled = true;
     olapCatalogsList.innerHTML = '<option value="" class="placeholder" disabled selected>' +
         Labels.select_catalog + '</option>';
@@ -1071,7 +1106,7 @@ FlexmonsterToolbar.prototype.showConnectToOLAPDialog = function () {
 
     var select = this.createSelect();
     var olapCubesList = select.select;
-    olapCubesList.id = "fm-lst-cubes";
+    olapCubesList.classList.add("fm-lst-cubes");
     olapCubesList.disabled = true;
     olapCubesList.innerHTML = '<option value="" class="placeholder" disabled selected>' +
         Labels.select_cube + '</option>';
@@ -1123,13 +1158,13 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
     var currentMeasureName = null;
 
     function updateDropdowns() {
-        textAlignDropDown.disabled = thousandsSepDropDown.disabled = decimalSepDropDown.disabled = decimalPlacesDropDown.disabled = currencySymbInput.disabled = positiveCurrencyFormat.disabled = negativeCurrencyFormat.disabled = nullValueInput.disabled = isPercentDropdown.disabled = (valuesDropDown.value == "empty");
+        textAlignDropDown.disabled = thousandsSepDropDown.disabled = decimalSepDropDown.disabled = decimalPlacesDropDown.disabled = currencySymbInput.disabled = positiveCurrencyFormat.disabled = negativeCurrencyFormat.disabled = negativeNumberFormat.disabled = nullValueInput.disabled = isPercentDropdown.disabled = (valuesDropDown.value == "empty");
     }
 
     var positiveCurrencyFormatConfigTemplate = {
         "$1": "$1",
         "1$": "1$"
-    }
+    };
 
     var negativeCurrencyFormatConfigTemplate = {
         "-$1": "-$1",
@@ -1140,6 +1175,20 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
         "1$-": "1$-",
         "($1)": "($1)",
         "(1$)": "(1$)"
+    };
+
+    var negativeNumberFormatTemplate = {
+        "-1": "-1",
+        "- 1": "- 1",
+        "1-": "1-",
+        "1 -": "1 -",
+        "(1)": "(1)"
+    };
+
+    var textAlignTemplate = {
+        "LEFT": "left",
+        "CENTER": "center",
+        "RIGHT": "right"
     }
 
     var currencySignTemplate = "$";
@@ -1175,6 +1224,9 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
         }
         if (currentFormatVO["negativeCurrencyFormat"] != negativeCurrencyFormat.value && negativeCurrencyFormat.value != "") {
             formatVO["negativeCurrencyFormat"] = negativeCurrencyFormat.value;
+        }
+        if (currentFormatVO["negativeNumberFormat"] != negativeNumberFormat.value && negativeNumberFormat.value != "") {
+            formatVO["negativeNumberFormat"] = negativeNumberFormat.value;
         }
         if (currentFormatVO["nullValue"] != nullValueInput.value) {
             formatVO["nullValue"] = nullValueInput.value;
@@ -1250,8 +1302,8 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
     ConfirmationPopUp.prototype.createModalOverlay = function () {
         var modalOverlay = document.createElement("div");
         modalOverlay.style.zIndex = 151;
-        modalOverlay.className = "fm-modal-overlay";
-        modalOverlay.id = "fm-popUp-confirm-modal-overlay";
+        modalOverlay.classList.add("fm-modal-overlay");
+        modalOverlay.classList.add("fm-popup-confirm-modal-overlay");
         var _this = this;
         modalOverlay.addEventListener('click', function (e) {
             _this.removePopUp(_this.dialog.content);
@@ -1327,21 +1379,24 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
 
         applyStringDataMode(isStringDataMode());
 
-        textAlignDropDown.value = (formatVO.textAlign == "left" || formatVO.textAlign == "right") ? formatVO.textAlign : "right";
+        textAlignDropDown.value = (formatVO.textAlign === textAlignTemplate["LEFT"] || formatVO.textAlign === textAlignTemplate["RIGHT"] || formatVO.textAlign === textAlignTemplate["CENTER"]) ? formatVO.textAlign : textAlignTemplate["RIGHT"];
         thousandsSepDropDown.value = formatVO.thousandsSeparator;
         decimalSepDropDown.value = formatVO.decimalSeparator;
         decimalPlacesDropDown.value = formatVO.decimalPlaces;
         currencySymbInput.value = formatVO.currencySymbol;
         positiveCurrencyFormat.value = formatVO.positiveCurrencyFormat;
         negativeCurrencyFormat.value = formatVO.negativeCurrencyFormat;
+        negativeNumberFormat.value = formatVO.negativeNumberFormat;
         nullValueInput.value = formatVO.nullValue;
         isPercentDropdown.value = (formatVO.isPercent == true) ? true : false;
         if (formatVO.currencySymbol == "" || formatVO.currencySymbol == null) {
             positiveCurrencyRow.classList.add("fm-hide");
             negativeCurrencyRow.classList.add("fm-hide");
+            negativeNumberRow.classList.remove("fm-hide");
         } else {
             positiveCurrencyRow.classList.remove("fm-hide");
             negativeCurrencyRow.classList.remove("fm-hide");
+            negativeNumberRow.classList.add("fm-hide");
             initializeSelect(positiveCurrencyFormat,
                 prefilterCurrencyFormatConfig(positiveCurrencyFormatConfigTemplate, positiveCurrencyFormatConfig, formatVO.currencySymbol));
             initializeSelect(negativeCurrencyFormat,
@@ -1404,7 +1459,7 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
     var dialog = this.popupManager.createPopup();
     var confirmPopUp = new ConfirmationPopUp();
 
-    dialog.content.id = "fm-popup-format-cells";
+    dialog.content.classList.add("fm-popup-format-cells");
     dialog.setTitle(this.osUtils.isMobile ? Labels.format : Labels.format_cells);
     dialog.setToolbar([{
             id: "fm-btn-apply",
@@ -1448,8 +1503,9 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
     var row = createFormattingItem(Labels.text_align);
     var select = self.createSelect();
     var textAlignDropDown = select.select;
-    textAlignDropDown.options[0] = new Option(Labels.align_left, "left");
-    textAlignDropDown.options[1] = new Option(Labels.align_right, "right");
+    textAlignDropDown.options[0] = new Option(Labels.align_left, textAlignTemplate["LEFT"]);
+    textAlignDropDown.options[1] = new Option(Labels.align_right, textAlignTemplate["RIGHT"]);
+    textAlignDropDown.options[2] = new Option(Labels.align_center, textAlignTemplate["CENTER"]);
     row.appendChild(select);
 
     // thousand_separator
@@ -1488,7 +1544,7 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
 
     // positive currency_format
     var positiveCurrencyRow = createFormattingItem(Labels.positive_currency_format);
-    positiveCurrencyRow.id = "fm-popup-format-cells-positive-currency";
+    positiveCurrencyRow.classList.add("fm-popup-format-cells-positive-currency");
     var select = self.createSelect();
     var positiveCurrencyFormat = select.select;
     initializeSelect(positiveCurrencyFormat, positiveCurrencyFormatConfig);
@@ -1496,11 +1552,18 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
 
     // negative currency_format
     var negativeCurrencyRow = createFormattingItem(Labels.negative_currency_format);
-    negativeCurrencyRow.id = "fm-popup-format-cells-negative-currency";
+    negativeCurrencyRow.classList.add("fm-popup-format-cells-negative-currency");
     var select = self.createSelect();
     var negativeCurrencyFormat = select.select;
     initializeSelect(negativeCurrencyFormat, negativeCurrencyFormatConfig);
     negativeCurrencyRow.appendChild(select);
+
+    var negativeNumberRow = createFormattingItem(Labels.negative_number_format);
+    negativeNumberRow.classList.add("fm-popup-format-cells-negative-number");
+    var select = self.createSelect();
+    var negativeNumberFormat = select.select;
+    initializeSelect(negativeNumberFormat, negativeNumberFormatTemplate);
+    negativeNumberRow.appendChild(select);
 
     currencySymbInput.addEventListener('input', function (event) {
         var value = currencySymbInput.value;
@@ -1508,6 +1571,7 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
         if (value.trim()) {
             positiveCurrencyRow.classList.remove("fm-hide");
             negativeCurrencyRow.classList.remove("fm-hide");
+            negativeNumberRow.classList.add("fm-hide");
             initializeSelect(positiveCurrencyFormat,
                 prefilterCurrencyFormatConfig(positiveCurrencyFormatConfigTemplate, positiveCurrencyFormatConfig, value));
             initializeSelect(negativeCurrencyFormat,
@@ -1515,6 +1579,7 @@ FlexmonsterToolbar.prototype.showFormatCellsDialog = function (measureName) {
         } else {
             positiveCurrencyRow.classList.add("fm-hide");
             negativeCurrencyRow.classList.add("fm-hide");
+            negativeNumberRow.classList.remove("fm-hide");
         }
     });
 
@@ -1591,7 +1656,9 @@ FlexmonsterToolbar.prototype.showConditionalFormattingDialog = function (measure
             }
         };
         conditions.unshift(condition);
-        content.insertBefore(self.createConditionalFormattingItem(condition, conditions), content.firstChild);
+        var item = self.createConditionalFormattingItem(condition, conditions);
+        content.insertBefore(item, content.firstChild);
+        item.focus();
         content.scrollTop = 0;
         if (conditions.length > 0) {
             placeholder.style.display = "none";
@@ -1654,7 +1721,7 @@ FlexmonsterToolbar.prototype.showConditionalFormattingDialog = function (measure
         };
     };
     var dialog = this.popupManager.createPopup();
-    dialog.content.id = "fm-popup-conditional";
+    dialog.content.classList.add("fm-popup-conditional");
     dialog.setTitle(this.osUtils.isMobile ? Labels.conditional : Labels.conditional_formatting);
     dialog.setToolbar([{
             id: "fm-btn-apply",
@@ -1668,9 +1735,7 @@ FlexmonsterToolbar.prototype.showConditionalFormattingDialog = function (measure
         }
     ], true);
 
-    var addConditionBtn = document.createElement("a");
-    addConditionBtn.id = "fm-add-btn";
-    addConditionBtn.setAttribute("href", "javascript:void(0)");
+    var addConditionBtn = document.createElement("button");
     addConditionBtn.classList.add("fm-ui-btn");
     addConditionBtn.classList.add("fm-ui-btn-light");
     addConditionBtn.classList.add("fm-button-add");
@@ -1702,7 +1767,7 @@ FlexmonsterToolbar.prototype.showConditionalFormattingDialog = function (measure
     self.setText(message, Labels.no_active_conditions);
     placeholder.appendChild(message);
 
-    var addConditionBtn2 = document.createElement("a");
+    var addConditionBtn2 = document.createElement("button");
     addConditionBtn2.setAttribute("href", "javascript:void(0)");
     addConditionBtn2.classList.add("fm-ui-btn");
     addConditionBtn2.classList.add("fm-ui-btn-light");
@@ -1901,18 +1966,11 @@ FlexmonsterToolbar.prototype.createConditionalFormattingItem = function (data, a
 
     var output = document.createElement("div");
     output.classList.add("fm-condition-row");
+    output.setAttribute("tabindex", "0");
 
     var itemRenderer = document.createElement("div");
     itemRenderer.classList.add("fm-wrap-relative");
     output.appendChild(itemRenderer);
-
-    var removeBtn = document.createElement("span");
-    removeBtn.classList.add("fm-cr-delete");
-    removeBtn.classList.add("fm-icon");
-    removeBtn.classList.add("fm-icon-act_trash");
-    removeBtn.onclick = onRemoveBtnClick;
-    removeBtn.setAttribute("title", Labels.tooltips.remove_condition);
-    itemRenderer.appendChild(removeBtn);
 
     var row = document.createElement("div");
     row.classList.add("fm-cr-inner");
@@ -1925,7 +1983,7 @@ FlexmonsterToolbar.prototype.createConditionalFormattingItem = function (data, a
     row.appendChild(label);
 
     var select = self.createSelect();
-    select.id = "fm-values";
+    select.classList.add("fm-values");
     var valuesDropDown = select.select;
     if ('measures' in data) {
         fillValuesDropDown(data.measures, data.measure);
@@ -1937,7 +1995,7 @@ FlexmonsterToolbar.prototype.createConditionalFormattingItem = function (data, a
     row.appendChild(select);
 
     var select = self.createSelect();
-    select.id = "fm-conditions";
+    select.classList.add("fm-conditions");
     var conditionsDropDown = select.select;
     fillConditionsDropDown(!('sign' in data) ? null : data.sign);
     conditionsDropDown.onchange = onConditionChanged;
@@ -1952,7 +2010,7 @@ FlexmonsterToolbar.prototype.createConditionalFormattingItem = function (data, a
     row.appendChild(input1);
 
     var andLabel = document.createElement("span");
-    andLabel.id = "fm-and-label";
+    andLabel.classList.add("fm-and-label");
     andLabel.classList.add("fm-width20");
     self.setText(andLabel, Labels.and_symbole);
     row.appendChild(andLabel);
@@ -1978,14 +2036,14 @@ FlexmonsterToolbar.prototype.createConditionalFormattingItem = function (data, a
     row.appendChild(label);
 
     var select = self.createSelect();
-    select.id = "fm-font-family";
+    select.classList.add("fm-font-family");
     var fontFamiliesDropDown = select.select;
     fillFontFamiliesDropDown((data.hasOwnProperty('format')) && (data.format.hasOwnProperty('fontFamily')) ? data.format.fontFamily : null);
     fontFamiliesDropDown.onchange = onFontFamilyChanged;
     row.appendChild(select);
 
     var select = self.createSelect();
-    select.id = "fm-font-size";
+    select.classList.add("fm-font-size");
     var fontSizesDropDown = select.select;
     fillFontSizesDropDown((data.hasOwnProperty('format')) && (data.format.hasOwnProperty('fontSize')) ? data.format.fontSize : null);
     fontSizesDropDown.onchange = onFontSizeChanged;
@@ -2000,13 +2058,24 @@ FlexmonsterToolbar.prototype.createConditionalFormattingItem = function (data, a
     row.appendChild(colorPicker.element);
 
     var sample = document.createElement("input");
-    sample.id = "fm-sample";
+    sample.setAttribute("tabindex", "-1");
+    sample.classList.add("fm-sample");
     sample.classList.add("fm-inp");
     sample.type = "number";
     sample.value = "73.93";
     sample.style.pointerEvents = "none";
     row.appendChild(sample);
     drawSample();
+
+    var removeBtn = document.createElement("a");
+    removeBtn.href = "javascript:void(0);";
+    removeBtn.classList.add("fm-cr-delete");
+    removeBtn.classList.add("fm-icon");
+    removeBtn.classList.add("fm-icon-act_trash");
+    removeBtn.onclick = onRemoveBtnClick;
+    removeBtn.setAttribute("title", Labels.tooltips.remove_condition);
+    itemRenderer.appendChild(removeBtn);
+    this.makeSelectableByKeyboard(removeBtn);
 
     return output;
 };
@@ -2059,7 +2128,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
         self.pivot.refresh();
     }
     var dialog = this.popupManager.createPopup();
-    dialog.content.id = "fm-popup-options";
+    dialog.content.classList.add("fm-popup-options");
     dialog.setTitle(this.osUtils.isMobile ? Labels.options : Labels.layout_options);
     dialog.setToolbar([{
             id: "fm-btn-apply",
@@ -2111,6 +2180,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     // grand totals - on
     var item = document.createElement("li");
@@ -2128,6 +2198,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     // grand totals - on rows
     var item = document.createElement("li");
@@ -2145,6 +2216,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     // grand totals - on cols
     var item = document.createElement("li");
@@ -2162,6 +2234,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     // layout
     var title = document.createElement("div");
@@ -2190,6 +2263,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     // layout - classic
     var item = document.createElement("li");
@@ -2207,6 +2281,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     var options = self.pivot.getReport({
         withDefaults: true,
@@ -2234,6 +2309,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
         itemWrap.appendChild(label);
         item.appendChild(itemWrap);
         list.appendChild(item);
+        this.makeSelectableByKeyboard(itemWrap);
     }
 
     var col = document.createElement("div");
@@ -2267,6 +2343,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     // subtotals - on
     var item = document.createElement("li");
@@ -2284,6 +2361,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     // subtotals - rows
     var item = document.createElement("li");
@@ -2301,6 +2379,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     // subtotals - columns
     var item = document.createElement("li");
@@ -2318,6 +2397,7 @@ FlexmonsterToolbar.prototype.showOptionsDialog = function () {
     itemWrap.appendChild(label);
     item.appendChild(itemWrap);
     list.appendChild(item);
+    this.makeSelectableByKeyboard(itemWrap);
 
     dialog.setContent(content);
     this.popupManager.addPopup(dialog.content);
@@ -2391,6 +2471,7 @@ FlexmonsterToolbar.prototype.showExportPdfDialog = function () {
     list.appendChild(item);
     var wrap = document.createElement("div");
     wrap.classList.add("fm-radio-wrap");
+    this.makeSelectableByKeyboard(wrap);
     item.appendChild(wrap);
 
     var portraitRadio = document.createElement("input");
@@ -2410,6 +2491,7 @@ FlexmonsterToolbar.prototype.showExportPdfDialog = function () {
     list.appendChild(item);
     var wrap = document.createElement("div");
     wrap.classList.add("fm-radio-wrap");
+    this.makeSelectableByKeyboard(wrap);
     item.appendChild(wrap);
 
     var landscapeRadio = document.createElement("input");
@@ -2459,6 +2541,7 @@ FlexmonsterToolbar.prototype.enterFullscreen = function (element) {
 
         this.toolbarWrapper.style.width = "100%";
         var fullScreenChangeHandler = null;
+        this.init();
 
         if (element.requestFullscreen) {
             element.requestFullscreen();
@@ -2502,8 +2585,6 @@ FlexmonsterToolbar.prototype.enterFullscreen = function (element) {
             }.bind(this);
             document.addEventListener("MSFullscreenChange", fullScreenChangeHandler, false);
         }
-        this.setText(document.querySelector("#fm-tab-fullscreen > a > span"), this.Labels.minimize);
-        document.querySelector("#fm-tab-fullscreen > a > div").innerHTML = this.icons.minimize;
     } else if (element.msRequestFullscreen && window !== top) {
         alert("Fullscreen mode in IE11 is not supported when Pivot is embedded in IFrame.");
     }
@@ -2530,6 +2611,8 @@ FlexmonsterToolbar.prototype.exitFullscreen = function () {
     } else if (document.msExitFullscreen && document.msFullscreenElement) { //IE 11
         document.msExitFullscreen();
     }
+
+    this.init();
 
     this.setText(document.querySelector("#fm-tab-fullscreen > a > span"), this.Labels.fullscreen);
     document.querySelector("#fm-tab-fullscreen > a > div").innerHTML = this.icons.fullscreen;
@@ -2563,6 +2646,21 @@ FlexmonsterToolbar.prototype.setText = function (target, text) {
         target.textContent = text;
     }
 }
+FlexmonsterToolbar.prototype.makeSelectableByKeyboard = function (element) {
+    element.setAttribute("tabindex", "0");
+    element.addEventListener("keyup", function (e) {
+        if (document.activeElement !== element) {
+            return;
+        }
+        if (e.which == 13 /*enter*/ || e.which == 32 /*space*/ ) {
+            element.click();
+            var el = element.querySelector("input");
+            if (el) {
+                el.click();
+            }
+        }
+    });
+}
 FlexmonsterToolbar.prototype.createSelect = function () {
     var wrapper = document.createElement("div");
     wrapper.classList.add("fm-select");
@@ -2576,10 +2674,12 @@ FlexmonsterToolbar.prototype.createDivider = function (data) {
     item.className = "fm-divider";
     return item;
 }
-FlexmonsterToolbar.prototype.createTab = function (data) {
+FlexmonsterToolbar.prototype.createTab = function (data, parent) {
     var tab = document.createElement("li");
     tab.id = data.id;
     var tabLink = document.createElement("a");
+    tabLink.setAttribute("role", "button");
+    tabLink.tabIndex = 0;
     if (data.hasOwnProperty("class_attr")) {
         tabLink.setAttribute("class", data.class_attr);
     }
@@ -2597,22 +2697,36 @@ FlexmonsterToolbar.prototype.createTab = function (data) {
     tabLink.appendChild(title);
     var _this = this;
     var _handler = typeof data.handler == "function" ? data.handler : this[data.handler];
+    var _onShowHandler = typeof data.onShowHandler == "function" ? data.onShowHandler : this[data.onShowHandler];
     if (!this.nullOrUndefined(_handler)) {
         tabLink.onclick =
             function (handler, args) {
                 return function () {
                     handler.call(_this, args);
+                    _this.hideDropdown(parent);
                 }
             }(_handler, data.args);
     }
-    if (!this.nullOrUndefined(this[data.onShowHandler])) {
+    if (!this.nullOrUndefined(_onShowHandler)) {
         tabLink.onmouseover =
             function (handler) {
                 return function () {
                     handler.call(_this);
                 }
-            }(this[data.onShowHandler]);
+            }(_onShowHandler);
     }
+    tab.addEventListener("keyup", function (e) {
+        if (e.which == 13 /*enter*/ || e.which == 32 /*space*/ ) {
+            if (data.menu) {
+                _this.toggleDropdown(this);
+            } else {
+                if (e.which == 32 /*space*/ ) { // enter calls click by default
+                    tabLink.click();
+                }
+                _this.hideDropdown(tab);
+            }
+        }
+    }, true);
     tab.onmouseover = function () {
         _this.showDropdown(this);
     }
@@ -2621,36 +2735,75 @@ FlexmonsterToolbar.prototype.createTab = function (data) {
     }
     tab.appendChild(tabLink);
     if (data.menu != null && (!this.osUtils.isMobile || data.collapse == true)) {
-        tab.appendChild(this.createTabMenu(data.menu));
+        var submenu = this.createTabMenu(data.menu, tab);
+        submenu.addEventListener("focusout", function (e) {
+            if (!e.target.parentElement.nextSibling) {
+                _this.hideDropdown(tab);
+            }
+        });
+        tab.appendChild(submenu);
     }
     return tab;
 }
+FlexmonsterToolbar.prototype.toggleDropdown = function (elem) {
+    var menu = elem.querySelectorAll(".fm-dropdown")[0];
+    if (menu) {
+        if (menu.style.display == "block") {
+            this.hideDropdown(elem);
+        } else {
+            this.showDropdown(elem);
+        }
+    }
+};
 FlexmonsterToolbar.prototype.showDropdown = function (elem) {
     var menu = elem.querySelectorAll(".fm-dropdown")[0];
     if (menu) {
         menu.style.display = "block";
-        if (menu.getBoundingClientRect().right > this.toolbarWrapper.getBoundingClientRect().right) {
+        var menuRect = menu.getBoundingClientRect();
+        var toolbarRect = this.toolbarWrapper.getBoundingClientRect();
+        var leftScrollArrow = this.container.querySelector(".fm-left-scroll-button");
+        var rightScrollArrow = this.container.querySelector(".fm-right-scroll-button");
+        var arrowWidth = (leftScrollArrow ? leftScrollArrow.offsetWidth : 0) + (rightScrollArrow ? rightScrollArrow.offsetWidth : 0);
+        if (menuRect.right > toolbarRect.right - arrowWidth) {
             menu.style.right = 0;
             this.addClass(elem, "fm-align-rigth");
+            menuRect = menu.getBoundingClientRect();
+            if (menuRect.right > toolbarRect.right - (rightScrollArrow ? rightScrollArrow.offsetWidth : 0)) {
+                var luft = menuRect.right - rightScrollArrow.getBoundingClientRect().left + 5;
+                menu.style.right = luft + "px";
+                this.removeClass(elem, "fm-align-rigth");
+                var dropDownUl = menu.querySelector("ul.fm-dropdown-content");
+                dropDownUl.classList.add("fm-dropdown-scrollable-right");
+            }
+        } else if (menuRect.left < toolbarRect.left + (leftScrollArrow ? leftScrollArrow.offsetWidth : 0)) { //this block handles cases when scrolling tabs are partly hidden
+            var luft = (leftScrollArrow ? leftScrollArrow.getBoundingClientRect().right : 0) - menuRect.left + 5;
+            menu.style.left = luft + "px";
+            var dropDownUl = menu.querySelector("ul.fm-dropdown-content");
+            dropDownUl.classList.add("fm-dropdown-scrollable-left");
         }
     }
 };
 FlexmonsterToolbar.prototype.hideDropdown = function (elem) {
+    if (!elem) {
+        return;
+    }
     var menu = elem.querySelectorAll(".fm-dropdown")[0];
     if (menu) {
         menu.style.display = "none";
-        menu.style.right = null;
+        menu.style.right = menu.style.left = null;
         this.removeClass(elem, "fm-align-rigth");
+        this.removeClass(menu.querySelector("ul.fm-dropdown-content"), "fm-dropdown-scrollable-left");
+        this.removeClass(menu.querySelector("ul.fm-dropdown-content"), "fm-dropdown-scrollable-right");
     }
 };
-FlexmonsterToolbar.prototype.createTabMenu = function (dataProvider) {
+FlexmonsterToolbar.prototype.createTabMenu = function (dataProvider, parent) {
     var container = document.createElement("div");
     container.className = "fm-dropdown fm-shadow-container";
     var content = document.createElement("ul");
     content.className = "fm-dropdown-content";
     for (var i = 0; i < dataProvider.length; i++) {
         if (this.isDisabled(dataProvider[i])) continue;
-        content.appendChild((dataProvider[i].divider) ? this.createMenuDivider() : this.createTab(dataProvider[i]));
+        content.appendChild((dataProvider[i].divider) ? this.createMenuDivider() : this.createTab(dataProvider[i], parent));
     }
     container.appendChild(content);
     return container;
@@ -2791,6 +2944,7 @@ FlexmonsterToolbar.PopupManager.prototype.addPopup = function (popup) {
         _this.centerPopup(popup);
     };
     window.addEventListener("resize", popup.resizeHandler);
+    popup.focus();
 };
 FlexmonsterToolbar.PopupManager.prototype.addLayoutClasses = function (popup) {
     popup.classList.remove("fm-layout-tablet");
@@ -2808,6 +2962,7 @@ FlexmonsterToolbar.PopupManager.prototype.addLayoutClasses = function (popup) {
     }
 };
 FlexmonsterToolbar.PopupManager.prototype.centerPopup = function (popup) {
+    if (this.modalOverlay == null) return;
     var containerRect = this.getBoundingRect(this.toolbar.container);
     var popupRect = this.getBoundingRect(popup);
     var toolbarRect = this.getBoundingRect(this.toolbar.toolbarWrapper);
@@ -2819,11 +2974,11 @@ FlexmonsterToolbar.PopupManager.prototype.centerPopup = function (popup) {
 };
 FlexmonsterToolbar.PopupManager.prototype.removePopup = function (popup) {
     var popup = (popup || this.activePopup);
-    if (this.modalOverlay != null) {
+    if (this.modalOverlay != null && this.toolbar.toolbarWrapper.contains(this.modalOverlay)) {
         this.toolbar.toolbarWrapper.removeChild(this.modalOverlay);
         this.modalOverlay = null;
     }
-    if (popup != null) {
+    if (popup != null && this.toolbar.toolbarWrapper.contains(popup)) {
         this.toolbar.toolbarWrapper.removeChild(popup);
         this.activePopup = null;
         window.removeEventListener("resize", popup.resizeHandler);
@@ -2842,8 +2997,8 @@ FlexmonsterToolbar.PopupManager.prototype.getBoundingRect = function (target) {
 };
 FlexmonsterToolbar.PopupManager.prototype.createModalOverlay = function () {
     var modalOverlay = document.createElement("div");
-    modalOverlay.className = "fm-modal-overlay";
-    modalOverlay.id = "fm-popUp-modal-overlay";
+    modalOverlay.classList.add("fm-modal-overlay");
+    modalOverlay.classList.add("fm-popup-modal-overlay");
     var _this = this;
     modalOverlay.addEventListener('click', function (e) {
         _this.removePopup(_this.activePopup);
@@ -2863,22 +3018,30 @@ FlexmonsterToolbar.PopupManager.PopupWindow = function (popupManager) {
     toolbar.style.clear = "both";
     this.content = document.createElement("div");
     this.content.className = "fm-popup fm-panel fm-toolbar-ui fm-ui";
+    this.content.setAttribute("tabindex", "0");
     this.content.appendChild(contentPanel);
     contentPanel.appendChild(titleBar);
     titleBar.appendChild(titleLabel);
+
+    var _this = this;
+
+    var focusGuard = document.createElement("div");
+    focusGuard.setAttribute("tabindex", "0");
+    focusGuard.addEventListener("focus", function () {
+        _this.content.focus();
+    });
 
     this.setTitle = function (title) {
         FlexmonsterToolbar.prototype.setText(titleLabel, title);
     }
     this.setContent = function (content) {
         contentPanel.insertBefore(content, titleBar.nextSibling);
+        contentPanel.appendChild(focusGuard);
     }
-    var _this = this;
     this.setToolbar = function (buttons, toHeader, removePopupHandler) {
         toolbar.innerHTML = "";
         for (var i = buttons.length - 1; i >= 0; i--) {
-            var button = document.createElement("a");
-            button.setAttribute("href", "javascript:void(0)");
+            var button = document.createElement("button");
             button.className = "fm-ui-btn" + (buttons[i].isPositive ? " fm-ui-btn-dark" : "");
             if (buttons[i].id) button.id = buttons[i].id;
             FlexmonsterToolbar.prototype.setText(button, buttons[i].label);
@@ -2921,6 +3084,7 @@ FlexmonsterToolbar.PopupManager.PopupWindow = function (popupManager) {
     return this;
 };
 FlexmonsterToolbar.ColorPicker = function (toolbar, popupContainer) {
+    var _this = this;
     this.toolbar = toolbar;
 
     this.element = document.createElement("div");
@@ -2936,19 +3100,28 @@ FlexmonsterToolbar.ColorPicker = function (toolbar, popupContainer) {
     this.colorPickerIcon.classList.add("fm-ui-icon-vam");
     this.colorPickerIcon.classList.add("fm-icon-act_font");
     this.colorPickerButton.appendChild(this.colorPickerIcon);
+    toolbar.makeSelectableByKeyboard(this.colorPickerButton);
 
     this.popup = document.createElement('div');
     this.popup.classList.add("fm-colorpick-popup");
+    this.popup.setAttribute("tabindex", "0");
     this.popup.onclick = function (event) {
         event.stopPropagation();
     };
     popupContainer.appendChild(this.popup);
 
+    var focusGuard = document.createElement("div");
+    focusGuard.setAttribute("tabindex", "0");
+    focusGuard.addEventListener("focus", function () {
+        _this.popup.focus();
+    });
+    popupContainer.appendChild(focusGuard);
+
     var colorSwitch = document.createElement("div");
     colorSwitch.classList.add("fm-color-targ-switch");
     this.popup.appendChild(colorSwitch);
 
-    var colorBtn = document.createElement("a");
+    var colorBtn = document.createElement("button");
     colorBtn.classList.add("fm-cts-item");
     colorBtn.classList.add("fm-current");
     colorBtn.href = "javascript:void(0);";
@@ -2958,7 +3131,7 @@ FlexmonsterToolbar.ColorPicker = function (toolbar, popupContainer) {
     };
     colorSwitch.appendChild(colorBtn);
 
-    var bgColorBtn = document.createElement("a");
+    var bgColorBtn = document.createElement("button");
     bgColorBtn.classList.add("fm-cts-item");
     bgColorBtn.innerHTML = toolbar.Labels.cp_highlight;
     bgColorBtn.href = "javascript:void(0);";
@@ -2991,6 +3164,8 @@ FlexmonsterToolbar.ColorPicker = function (toolbar, popupContainer) {
         var item = document.createElement("div");
         item.classList.add("fm-r10c-item");
         item.style.backgroundColor = color;
+        item.setAttribute("tabindex", "0");
+        this.toolbar.makeSelectableByKeyboard(item);
 
         item.setAttribute('data-c', color);
         item.addEventListener('click', onMainColorClick);
@@ -3019,6 +3194,8 @@ FlexmonsterToolbar.ColorPicker = function (toolbar, popupContainer) {
         var item = document.createElement("div");
         item.classList.add("fm-r4c-item");
         item.addEventListener('click', onColorClick);
+        item.setAttribute("tabindex", "0");
+        this.toolbar.makeSelectableByKeyboard(item);
         this.shadeColors.appendChild(item);
 
         var check = document.createElement("span");
@@ -3033,13 +3210,13 @@ FlexmonsterToolbar.ColorPicker = function (toolbar, popupContainer) {
     row.classList.add("fm-cp-btns-row");
     this.popup.appendChild(row);
 
-    var applyBtn = document.createElement("a");
+    var applyBtn = document.createElement("button");
     applyBtn.innerHTML = toolbar.Labels.apply;
     applyBtn.classList.add("fm-ui-btn");
     applyBtn.classList.add("fm-ui-btn-dark");
     applyBtn.addEventListener("click", onApplyClick);
 
-    var cancelBtn = document.createElement("a");
+    var cancelBtn = document.createElement("button");
     cancelBtn.innerHTML = toolbar.Labels.cancel;
     cancelBtn.classList.add("fm-ui-btn");
     cancelBtn.addEventListener("click", onCancelClick);
@@ -3057,10 +3234,10 @@ FlexmonsterToolbar.ColorPicker = function (toolbar, popupContainer) {
     this.colorPickerButton.addEventListener('click', onColorButtonClick);
     document.body.addEventListener('click', onBodyClick);
 
-    var _this = this;
-
     function onBodyClick(event) {
-        onCancelClick();
+        if (_this.isOpened()) {
+            _this.closePopup();
+        }
     }
 
     function onColorButtonClick(event) {
@@ -3069,6 +3246,7 @@ FlexmonsterToolbar.ColorPicker = function (toolbar, popupContainer) {
             _this.closePopup();
         } else {
             _this.openPopup();
+            _this.popup.focus();
         }
     }
 
@@ -3103,18 +3281,20 @@ FlexmonsterToolbar.ColorPicker = function (toolbar, popupContainer) {
         }
     }
 
-    function onApplyClick() {
+    function onApplyClick(e) {
         _this.closePopup();
         if (_this.applyHandler) {
             _this.applyHandler();
         }
+        _this.colorPickerButton.focus();
     }
 
-    function onCancelClick() {
+    function onCancelClick(e) {
         _this.closePopup();
         if (_this.cancelHandler) {
             _this.cancelHandler();
         }
+        _this.colorPickerButton.focus();
     }
 }
 FlexmonsterToolbar.ColorPicker.prototype.colors = {
@@ -3208,8 +3388,17 @@ FlexmonsterToolbar.ColorPicker.prototype.closePopup = function () {
         return;
     }
     this.popup.parentElement.classList.remove("fm-popup-opened");
+    // hack for setting focus back to colorpicker button when using keybord for apply/cancel
+    this.justClosed = true;
+    var _this = this;
+    setTimeout(function () {
+        _this.justClosed = false;
+    }, 100);
 }
 FlexmonsterToolbar.ColorPicker.prototype.openPopup = function () {
+    if (this.justClosed) {
+        return;
+    }
     // close others
     var openedPopups = this.toolbar.toolbarWrapper.querySelectorAll('.fm-colorpick-popup');
     for (var i = 0; i < openedPopups.length; i++) {
@@ -3220,7 +3409,7 @@ FlexmonsterToolbar.ColorPicker.prototype.openPopup = function () {
     }
     // open current
     this.popup.parentElement.classList.add("fm-popup-opened");
-    var parent = this.toolbar.toolbarWrapper.querySelector("#fm-popup-conditional .fm-panel-content");
+    var parent = this.toolbar.toolbarWrapper.querySelector(".fm-popup-conditional .fm-panel-content");
     var pos = this.getWhere(this.colorPickerButton, parent);
     var posAbs = this.getWhere(this.colorPickerButton, document.body);
     if (posAbs.top - this.popup.clientHeight < 0) {

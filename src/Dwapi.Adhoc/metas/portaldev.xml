@@ -2,87 +2,115 @@
 <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.activequerybuilder.com/schemas/metadata2.xsd" loaded_types="All">
 	<database name="PortalDev" default="True" loaded_types="All">
 		<schema name="dbo" default="True" loaded_types="All">
-			<table name="Dim_AgeGroups" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="Age" type_name="nvarchar" type="String" size="50" />
-				<field name="MOH_AgeGroup" type_name="nvarchar" type="String" size="50" />
+			<table name="FACT_Trans_DSD_Cascade" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="MFLCode" type_name="varchar" type="String" size="50" />
+				<field name="FacilityName" type_name="varchar" type="String" size="255" />
+				<field name="Gender" type_name="varchar" type="String" size="6" />
 				<field name="DATIM_AgeGroup" type_name="nvarchar" type="String" size="50" />
-				<field name="Dashbard_AgeGroup" type_name="nvarchar" type="String" size="50" />
-			</table>
-			<table name="DimDate" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="DateValue" type_name="date" type="DateTime" size="3" />
-				<field name="TheDay" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TheDayName" type_name="nvarchar" type="String" size="30" />
-				<field name="TheWeek" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TheISOWeek" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TheDayOfWeek" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TheMonth" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TheMonthName" type_name="nvarchar" type="String" size="30" />
-				<field name="TheQuarter" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TheYear" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TheFirstOfMonth" type_name="date" type="DateTime" size="3" />
-				<field name="TheLastOfYear" type_name="date" type="DateTime" size="3" />
-				<field name="TheDayOfYear" type_name="int" type="Int32" size="4" precision="10" />
-			</table>
-			<table name="FACT_CT_TimeToART_Grp" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="MFLCode" type_name="varchar" type="String" size="50" />
-				<field name="FacilityName" type_name="varchar" type="String" size="255" />
 				<field name="County" type_name="nvarchar" type="String" size="255" />
-				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
+				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
 				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="StartART_Year" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="StartART_Month" type_name="nvarchar" type="String" size="30" />
-				<field name="TimeToARTDiagnosis_Grp" type_name="varchar" type="String" size="12" nullable="False" />
-				<field name="NumPatients" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TotalBySite" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="proportions" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
+				<field name="TXCurr" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="Stability" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="OnMMD" type_name="int" type="Int32" size="4" precision="10" />
 			</table>
-			<table name="FACT_CT_TimeToART_Grp_Over14" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<table name="Fact_Trans_DSD_ApptsbyStabilityStatus" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
-				<field name="FacilityName" type_name="varchar" type="String" size="255" />
-				<field name="County" type_name="nvarchar" type="String" size="255" />
-				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
-				<field name="CTPartner" type_name="varchar" type="String" size="200" />
 				<field name="Gender" type_name="varchar" type="String" size="6" />
-				<field name="MOH_AgeGroup" type_name="nvarchar" type="String" size="50" />
-				<field name="StartART_MonthYear" type_name="nvarchar" type="String" size="43" nullable="False" />
-				<field name="TimeToARTDiagnosis_Grp" type_name="varchar" type="String" size="12" nullable="False" />
-				<field name="NumPatients" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="proportion_MonthYear" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
-				<field name="proportion_GenderMonthYear" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
-				<field name="proportion_AgeGroupMonthYear" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
-				<field name="proportion_AgeGroupGenderMonthYear" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
-			</table>
-			<table name="FACT_CT_TimeToFirstVL_Grp" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
 				<field name="County" type_name="nvarchar" type="String" size="255" />
 				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
 				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="StartART_Year" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TimeToFirstVL_Grp" type_name="varchar" type="String" size="15" nullable="False" />
+				<field name="AppointmentsCategory" type_name="varchar" type="String" size="10" />
+				<field name="Stability" type_name="varchar" type="String" size="8" nullable="False" />
 				<field name="NumPatients" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TotalBySite" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="proportions" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
+				<field name="DATIM_AgeGroup" type_name="nvarchar" type="String" size="50" />
 			</table>
-			<table name="FACT_Trans_AdverseEvents" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<table name="FACT_Trans_DSD_StabilityStatus" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
 				<field name="County" type_name="nvarchar" type="String" size="255" />
 				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
 				<field name="CTPartner" type_name="varchar" type="String" size="200" />
 				<field name="Gender" type_name="varchar" type="String" size="6" />
-				<field name="AgeGroup" type_name="nvarchar" type="String" size="50" />
-				<field name="AdverseEvent_Total" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="CTAgency" type_name="varchar" type="String" size="100" />
+				<field name="DATIM_AgeGroup" type_name="nvarchar" type="String" size="50" />
+				<field name="Stability" type_name="int" type="Int32" size="4" precision="10" />
 			</table>
-			<table name="FACT_Trans_AdverseEventsClients" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<table name="FACT_Trans_DSD_MMD_Stable" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
+				<field name="Gender" type_name="varchar" type="String" size="6" />
+				<field name="DATIM_AgeGroup" type_name="nvarchar" type="String" size="50" />
 				<field name="County" type_name="nvarchar" type="String" size="255" />
 				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
 				<field name="CTPartner" type_name="varchar" type="String" size="200" />
+				<field name="DifferentiatedCare" type_name="varchar" type="String" size="35" />
+				<field name="MMDModels" type_name="int" type="Int32" size="4" precision="10" />
+			</table>
+			<table name="Fact_Trans_DSD_Unstable" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="MFLCode" type_name="varchar" type="String" size="50" />
+				<field name="FacilityName" type_name="varchar" type="String" size="255" />
 				<field name="Gender" type_name="varchar" type="String" size="6" />
-				<field name="AgeGroup" type_name="nvarchar" type="String" size="50" />
-				<field name="Total" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="DATIM_AgeGroup" type_name="nvarchar" type="String" size="50" />
+				<field name="County" type_name="nvarchar" type="String" size="255" />
+				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
+				<field name="CTPartner" type_name="varchar" type="String" size="200" />
+				<field name="onARTlessthan12mnths" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="Agelessthan20Yrs" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="Adherence" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="HighVL" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="BMI" type_name="int" type="Int32" size="4" precision="10" />
+			</table>
+			<table name="Fact_Trans_TreatmentOutcomes" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="MFLCode" type_name="varchar" type="String" size="50" />
+				<field name="FacilityName" type_name="varchar" type="String" size="255" />
+				<field name="County" type_name="nvarchar" type="String" size="255" />
+				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
+				<field name="CTPartner" type_name="varchar" type="String" size="200" />
+				<field name="Gender" type_name="varchar" type="String" size="6" />
+				<field name="ageGroup" type_name="varchar" type="String" size="5" />
+				<field name="StartYear" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="ARTOutcome" type_name="varchar" type="String" size="16" nullable="False" />
+				<field name="TotalOutcomes" type_name="int" type="Int32" size="4" precision="10" />
+			</table>
+			<table name="QueryBuilders" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="id" primary_key="True" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="layout" type_name="text" type="String" size="2147483647" />
+			</table>
+			<table name="QueryTransformers" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="id" primary_key="True" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="state" type_name="text" type="String" size="2147483647" />
+			</table>
+			<table name="all_EMRSites" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="facilityId" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
+				<field name="name" type_name="varchar" type="String" size="-1" />
+				<field name="county" type_name="varchar" type="String" size="-1" />
+				<field name="subCounty" type_name="varchar" type="String" size="-1" />
+				<field name="agency" type_name="nvarchar" type="String" size="50" />
+				<field name="partner" type_name="varchar" type="String" size="-1" />
+				<field name="owner" type_name="nvarchar" type="String" size="50" />
+				<field name="latitude" type_name="nvarchar" type="String" size="50" />
+				<field name="longitude" type_name="nvarchar" type="String" size="50" />
+				<field name="EMR" type_name="nvarchar" type="String" size="50" />
+				<field name="isCT" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
+				<field name="isPkv" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
+				<field name="isHts" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
+			</table>
+			<table name="WorkingCoordinates_Nov2020" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="MFL_Code" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
+				<field name="Facility_Name" type_name="nvarchar" type="String" size="100" nullable="False" />
+				<field name="County" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="SubCounty" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="Owner" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="SDP" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="SDP_Agency" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="Implementation" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="EMR" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="Distribution" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="EMR_Status" type_name="nvarchar" type="String" size="50" nullable="False" />
+				<field name="Latitude" type_name="nvarchar" type="String" size="50" />
+				<field name="Longitude" type_name="nvarchar" type="String" size="50" />
 			</table>
 			<table name="FACT_Trans_AECategories" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
@@ -114,61 +142,72 @@
 				<field name="Severity_Total" type_name="int" type="Int32" size="4" precision="10" />
 				<field name="AdverseEventActionTaken" type_name="varchar" type="String" size="29" nullable="False" />
 			</table>
-			<table name="Fact_Trans_DSD_ApptsbyStabilityStatus" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<table name="FACT_Trans_AdverseEventsClients" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
+				<field name="FacilityName" type_name="varchar" type="String" size="255" />
+				<field name="County" type_name="nvarchar" type="String" size="255" />
+				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
+				<field name="CTPartner" type_name="varchar" type="String" size="200" />
 				<field name="Gender" type_name="varchar" type="String" size="6" />
+				<field name="AgeGroup" type_name="nvarchar" type="String" size="50" />
+				<field name="Total" type_name="int" type="Int32" size="4" precision="10" />
+			</table>
+			<table name="DimDate" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="DateValue" type_name="date" type="DateTime" size="3" />
+				<field name="TheDay" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TheDayName" type_name="nvarchar" type="String" size="30" />
+				<field name="TheWeek" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TheISOWeek" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TheDayOfWeek" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TheMonth" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TheMonthName" type_name="nvarchar" type="String" size="30" />
+				<field name="TheQuarter" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TheYear" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TheFirstOfMonth" type_name="date" type="DateTime" size="3" />
+				<field name="TheLastOfYear" type_name="date" type="DateTime" size="3" />
+				<field name="TheDayOfYear" type_name="int" type="Int32" size="4" precision="10" />
+			</table>
+			<table name="FACT_TRANS_Optimize_RegLines" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
 				<field name="County" type_name="nvarchar" type="String" size="255" />
 				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
 				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="AppointmentsCategory" type_name="varchar" type="String" size="10" />
-				<field name="Stability" type_name="varchar" type="String" size="8" nullable="False" />
-				<field name="NumPatients" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="DATIM_AgeGroup" type_name="nvarchar" type="String" size="50" />
-			</table>
-			<table name="FACT_Trans_DSD_Cascade" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="MFLCode" type_name="varchar" type="String" size="50" />
-				<field name="FacilityName" type_name="varchar" type="String" size="255" />
-				<field name="County" type_name="nvarchar" type="String" size="255" />
-				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
-				<field name="CTPartner" type_name="varchar" type="String" size="200" />
+				<field name="Agegroup" type_name="varchar" type="String" size="5" nullable="False" />
+				<field name="Gender" type_name="varchar" type="String" size="6" />
+				<field name="RegimenLine" type_name="varchar" type="String" size="25" nullable="False" />
 				<field name="TXCurr" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="Stability" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="OnMMD" type_name="int" type="Int32" size="4" precision="10" />
 			</table>
-			<table name="FACT_Trans_DSD_MMD_Stable" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<table name="FACT_TRANS_Optimize_StartRegimen" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
+				<field name="County" type_name="nvarchar" type="String" size="255" />
+				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
+				<field name="CTPartner" type_name="varchar" type="String" size="200" />
+				<field name="Agegroup" type_name="varchar" type="String" size="5" nullable="False" />
 				<field name="Gender" type_name="varchar" type="String" size="6" />
-				<field name="DATIM_AgeGroup" type_name="nvarchar" type="String" size="50" />
-				<field name="County" type_name="nvarchar" type="String" size="255" />
-				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
-				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="DifferentiatedCare" type_name="varchar" type="String" size="35" />
-				<field name="MMDModels" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="StartRegimen" type_name="varchar" type="String" size="13" nullable="False" />
+				<field name="StartARTMonth" type_name="nvarchar" type="String" size="30" />
+				<field name="StartARTYr" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TXCurr" type_name="int" type="Int32" size="4" precision="10" />
 			</table>
-			<table name="FACT_Trans_DSD_StabilityStatus" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<table name="FACT_CT_TimeToFirstVL_Grp" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
 				<field name="County" type_name="nvarchar" type="String" size="255" />
-				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
+				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
 				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="Gender" type_name="varchar" type="String" size="6" />
-				<field name="CTAgency" type_name="varchar" type="String" size="100" />
-				<field name="DATIM_AgeGroup" type_name="nvarchar" type="String" size="50" />
-				<field name="Stability" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="StartART_Year" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TimeToFirstVL_Grp" type_name="varchar" type="String" size="15" nullable="False" />
+				<field name="NumPatients" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TotalBySite" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="proportions" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
 			</table>
-			<table name="Fact_Trans_DSD_Unstable" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="MFLCode" type_name="varchar" type="String" size="50" />
-				<field name="FacilityName" type_name="varchar" type="String" size="255" />
-				<field name="County" type_name="nvarchar" type="String" size="255" />
-				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
-				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="onARTlessthan12mnths" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="Agelessthan20Yrs" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="Adherence" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="HighVL" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="BMI" type_name="int" type="Int32" size="4" precision="10" />
+			<table name="Dim_AgeGroups" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="Age" type_name="nvarchar" type="String" size="50" />
+				<field name="MOH_AgeGroup" type_name="nvarchar" type="String" size="50" />
+				<field name="DATIM_AgeGroup" type_name="nvarchar" type="String" size="50" />
+				<field name="Dashbard_AgeGroup" type_name="nvarchar" type="String" size="50" />
 			</table>
 			<table name="Fact_Trans_HMIS_STATS_TXCURR" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
@@ -183,66 +222,73 @@
 				<field name="Last12MonthVL" type_name="int" type="Int32" size="4" precision="10" />
 				<field name="Last12MVLSup" type_name="int" type="Int32" size="4" precision="10" />
 			</table>
-			<table name="Fact_Trans_New_Cohort" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<table name="FACT_Trans_Newly_Started" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
 				<field name="County" type_name="nvarchar" type="String" size="255" />
 				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
 				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="CTAgency" type_name="varchar" type="String" size="100" />
-				<field name="FileName" type_name="varchar" type="String" size="100" />
-				<field name="fprovider" type_name="varchar" type="String" size="100" />
-				<field name="PatientPK" type_name="varchar" type="String" size="50" />
-				<field name="PatientID" type_name="varchar" type="String" size="100" />
+				<field name="Start_Year" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="StartART_Month" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="StartedART" type_name="int" type="Int32" size="4" precision="10" />
 				<field name="Gender" type_name="varchar" type="String" size="6" />
-				<field name="DOB" type_name="varchar" type="String" size="50" />
-				<field name="MaritalStatus" type_name="varchar" type="String" size="250" />
-				<field name="DateConfirmedHIVPositive" type_name="date" type="DateTime" size="3" />
-				<field name="EnrollmentDate" type_name="date" type="DateTime" size="3" />
-				<field name="ageenrol" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="StartARTDate" type_name="date" type="DateTime" size="3" />
-				<field name="StartRegimenLine" type_name="varchar" type="String" size="250" />
-				<field name="StartRegimen" type_name="varchar" type="String" size="250" />
-				<field name="TimetoARTnrollment" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TimetoARTDiagnosis" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TimeToARTDiagnosis_Grp" type_name="varchar" type="String" size="12" nullable="False" />
-				<field name="ageARTstart" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="LastARTDate" type_name="date" type="DateTime" size="3" />
-				<field name="CurrentRegimen" type_name="varchar" type="String" size="250" />
-				<field name="currentRegimenLine" type_name="varchar" type="String" size="250" />
-				<field name="dtLastVisit" type_name="date" type="DateTime" size="3" />
-				<field name="ageLV" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="NextAppointmentDate" type_name="date" type="DateTime" size="3" />
-				<field name="TXCurr" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
-				<field name="ARTOutcome" type_name="varchar" type="String" size="2" />
-				<field name="EligibleVL" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="Last12MonthVL" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
-				<field name="Last12MVLResult" type_name="varchar" type="String" size="3" />
-				<field name="Last12MVLSup" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="OnART&lt;12Months" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="LatestWeight" type_name="varchar" type="String" size="150" />
-				<field name="LatestHeight" type_name="varchar" type="String" size="150" />
-				<field name="Adherence" type_name="varchar" type="String" size="250" />
-				<field name="DifferentiatedCare" type_name="varchar" type="String" size="35" />
-				<field name="onMMD" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="StabilityAssessment" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="FirstVL" type_name="varchar" type="String" size="100" />
-				<field name="FirstVLDate" type_name="date" type="DateTime" size="3" />
-				<field name="lastVL" type_name="varchar" type="String" size="100" />
-				<field name="lastVLDate" type_name="date" type="DateTime" size="3" />
-				<field name="Stability_Compute" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
-				<field name="m3ARTStatus" type_name="varchar" type="String" size="2" />
-				<field name="m3ARTStatusOutcome" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
-				<field name="m6ARTStatus" type_name="varchar" type="String" size="2" />
-				<field name="m6ARTStatusOutcome" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
-				<field name="m12ARTStatus" type_name="varchar" type="String" size="2" />
-				<field name="m12ARTStatusOutcome" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
-				<field name="m18ARTStatus" type_name="varchar" type="String" size="2" />
-				<field name="m18ARTStatusOutcome" type_name="int" type="Int32" size="4" precision="10" nullable="False" />
-				<field name="TimetoFirstVL" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="TimeToFirstVL_Grp" type_name="varchar" type="String" size="15" nullable="False" />
+				<field name="AgeGroup" type_name="nvarchar" type="String" size="50" />
 			</table>
-			<table name="Fact_Trans_New_Cohort_t" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<table name="FACT_CT_TimeToART_Grp" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="MFLCode" type_name="varchar" type="String" size="50" />
+				<field name="FacilityName" type_name="varchar" type="String" size="255" />
+				<field name="County" type_name="nvarchar" type="String" size="255" />
+				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
+				<field name="CTPartner" type_name="varchar" type="String" size="200" />
+				<field name="StartART_Year" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="StartART_Month" type_name="nvarchar" type="String" size="30" />
+				<field name="TimeToARTDiagnosis_Grp" type_name="varchar" type="String" size="12" nullable="False" />
+				<field name="NumPatients" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="TotalBySite" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="proportions" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
+			</table>
+			<table name="FACT_CT_TimeToART_Grp_Over14" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="MFLCode" type_name="varchar" type="String" size="50" />
+				<field name="FacilityName" type_name="varchar" type="String" size="255" />
+				<field name="County" type_name="nvarchar" type="String" size="255" />
+				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
+				<field name="CTPartner" type_name="varchar" type="String" size="200" />
+				<field name="Gender" type_name="varchar" type="String" size="6" />
+				<field name="MOH_AgeGroup" type_name="nvarchar" type="String" size="50" />
+				<field name="StartART_MonthYear" type_name="nvarchar" type="String" size="43" nullable="False" />
+				<field name="TimeToARTDiagnosis_Grp" type_name="varchar" type="String" size="12" nullable="False" />
+				<field name="NumPatients" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="proportion_MonthYear" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
+				<field name="proportion_GenderMonthYear" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
+				<field name="proportion_AgeGroupMonthYear" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
+				<field name="proportion_AgeGroupGenderMonthYear" type_name="decimal" type="Decimal" size="17" precision="8" scale="2" />
+			</table>
+			<table name="FACT_Trans_VL_OverallUptake" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="MFLCode" type_name="varchar" type="String" size="50" />
+				<field name="FacilityName" type_name="varchar" type="String" size="255" />
+				<field name="County" type_name="nvarchar" type="String" size="255" />
+				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
+				<field name="CTPartner" type_name="varchar" type="String" size="200" />
+				<field name="Gender" type_name="varchar" type="String" size="6" />
+				<field name="AgeGroup" type_name="nvarchar" type="String" size="50" />
+				<field name="TXCurr" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="EligibleVL12Mnths" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="VLDone" type_name="int" type="Int32" size="4" precision="10" />
+				<field name="VirallySuppressed" type_name="int" type="Int32" size="4" precision="10" />
+			</table>
+			<table name="FACT_Trans_VL_Outcome" loaded_types="All" referencing_foreignkeys_loaded="True">
+				<field name="MFLCode" type_name="varchar" type="String" size="50" />
+				<field name="FacilityName" type_name="varchar" type="String" size="255" />
+				<field name="County" type_name="nvarchar" type="String" size="255" />
+				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
+				<field name="CTPartner" type_name="varchar" type="String" size="200" />
+				<field name="Gender" type_name="varchar" type="String" size="6" />
+				<field name="AgeGroup" type_name="nvarchar" type="String" size="50" />
+				<field name="CurrentRegimen" type_name="varchar" type="String" size="6" nullable="False" />
+				<field name="Last12MVLResult" type_name="varchar" type="String" size="10" />
+				<field name="Total_Last12MVL" type_name="int" type="Int32" size="4" precision="10" />
+			</table>
+			<table name="Fact_Trans_New_Cohort" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
 				<field name="County" type_name="nvarchar" type="String" size="255" />
@@ -303,18 +349,6 @@
 				<field name="Project" type_name="varchar" type="String" size="100" />
 				<field name="EMR" type_name="varchar" type="String" size="100" />
 			</table>
-			<table name="FACT_Trans_Newly_Started" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="MFLCode" type_name="varchar" type="String" size="50" />
-				<field name="FacilityName" type_name="varchar" type="String" size="255" />
-				<field name="County" type_name="nvarchar" type="String" size="255" />
-				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
-				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="Start_Year" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="StartART_Month" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="StartedART" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="Gender" type_name="varchar" type="String" size="6" />
-				<field name="AgeGroup" type_name="nvarchar" type="String" size="50" />
-			</table>
 			<table name="FACT_Trans_Retention" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
@@ -328,19 +362,7 @@
 				<field name="12Mstatus" type_name="int" type="Int32" size="4" precision="10" />
 				<field name="18Mstatus" type_name="int" type="Int32" size="4" precision="10" />
 			</table>
-			<table name="Fact_Trans_TreatmentOutcomes" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="MFLCode" type_name="varchar" type="String" size="50" />
-				<field name="FacilityName" type_name="varchar" type="String" size="255" />
-				<field name="County" type_name="nvarchar" type="String" size="255" />
-				<field name="Subcounty" type_name="nvarchar" type="String" size="255" />
-				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="Gender" type_name="varchar" type="String" size="6" />
-				<field name="ageGroup" type_name="varchar" type="String" size="5" />
-				<field name="StartYear" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="ARTOutcome" type_name="varchar" type="String" size="16" nullable="False" />
-				<field name="TotalOutcomes" type_name="int" type="Int32" size="4" precision="10" />
-			</table>
-			<table name="FACT_Trans_VL_Outcome" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<table name="FACT_Trans_AdverseEvents" loaded_types="All" referencing_foreignkeys_loaded="True">
 				<field name="MFLCode" type_name="varchar" type="String" size="50" />
 				<field name="FacilityName" type_name="varchar" type="String" size="255" />
 				<field name="County" type_name="nvarchar" type="String" size="255" />
@@ -348,30 +370,7 @@
 				<field name="CTPartner" type_name="varchar" type="String" size="200" />
 				<field name="Gender" type_name="varchar" type="String" size="6" />
 				<field name="AgeGroup" type_name="nvarchar" type="String" size="50" />
-				<field name="CurrentRegimen" type_name="varchar" type="String" size="6" nullable="False" />
-				<field name="Last12MVLResult" type_name="varchar" type="String" size="10" />
-				<field name="Total_Last12MVL" type_name="int" type="Int32" size="4" precision="10" />
-			</table>
-			<table name="FACT_Trans_VL_OverallUptake" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="MFLCode" type_name="varchar" type="String" size="50" />
-				<field name="FacilityName" type_name="varchar" type="String" size="255" />
-				<field name="County" type_name="nvarchar" type="String" size="255" />
-				<field name="SubCounty" type_name="nvarchar" type="String" size="255" />
-				<field name="CTPartner" type_name="varchar" type="String" size="200" />
-				<field name="Gender" type_name="varchar" type="String" size="6" />
-				<field name="AgeGroup" type_name="nvarchar" type="String" size="50" />
-				<field name="TXCurr" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="EligibleVL12Mnths" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="VLDone" type_name="int" type="Int32" size="4" precision="10" />
-				<field name="VirallySuppressed" type_name="int" type="Int32" size="4" precision="10" />
-			</table>
-			<table name="QueryBuilders" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="id" primary_key="True" type_name="nvarchar" type="String" size="50" nullable="False" />
-				<field name="layout" type_name="text" type="String" size="2147483647" />
-			</table>
-			<table name="QueryTransformers" loaded_types="All" referencing_foreignkeys_loaded="True">
-				<field name="id" primary_key="True" type_name="nvarchar" type="String" size="50" nullable="False" />
-				<field name="state" type_name="text" type="String" size="2147483647" />
+				<field name="AdverseEvent_Total" type_name="int" type="Int32" size="4" precision="10" />
 			</table>
 		</schema>
 	</database>

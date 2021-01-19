@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <PackageReference Include="Flexmonster.DataServer.Core" Version="2.8.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.10" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
@@ -71,6 +73,45 @@
     <_ContentIncludedByDefault Remove="Views\SimpleDemo\Index.cshtml" />
     <_ContentIncludedByDefault Remove="Content\json.json" />
     <_ContentIncludedByDefault Remove="Content\plugins\Pivot\datim.json" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\flexmonster.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\flexmonster.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\flexmonster.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\canvg.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\d3.v3.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\elasticsearch.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\file.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\flexmonster.fusioncharts.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\flexmonster.googlecharts.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\flexmonster.highcharts.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\html2canvas.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\jquery.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\jspdf.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\jszip.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\promise.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\sha1.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\lib\zlib.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\assets\flexmonster-icons.eot" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\assets\flexmonster-icons.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\assets\flexmonster-icons.ttf" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\assets\flexmonster-icons.woff" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\dark\flexmonster.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\dark\flexmonster.less" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\dark\flexmonster.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\default\flexmonster.less" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\flexmonster-base.less" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\lightblue\flexmonster.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\lightblue\flexmonster.less" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\lightblue\flexmonster.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\old\flexmonster.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\old\flexmonster.less" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\old\flexmonster.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\orange\flexmonster.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\orange\flexmonster.less" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\orange\flexmonster.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\teal\flexmonster.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\teal\flexmonster.less" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\theme\teal\flexmonster.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\--flexmonster\toolbar\flexmonster.toolbar.js" />
   </ItemGroup>
 
   <ItemGroup>

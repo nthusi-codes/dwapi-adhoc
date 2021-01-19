@@ -7,12 +7,14 @@ using System.Net;
 using ActiveQueryBuilder.Core.QueryTransformer;
 using ActiveQueryBuilder.Web.Server.Services;
 using Dwapi.Adhoc.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Dwapi.Adhoc.Controllers
 {
+    [Authorize]
     public class QueryResultsDemoController : Controller
     {
         private string _instanceId = "QueryResults";
@@ -37,7 +39,6 @@ namespace Dwapi.Adhoc.Controllers
 
         public ActionResult GetData([FromBody] GridModel m)
         {
-
             var qt = _qts.Get(m.InstanceId);
 
             qt.Skip((m.Pagenum * m.Pagesize).ToString());
