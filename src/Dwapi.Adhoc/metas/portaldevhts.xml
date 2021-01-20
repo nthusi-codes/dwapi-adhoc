@@ -1,0 +1,531 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.activequerybuilder.com/schemas/metadata2.xsd" loaded_types="All">
+	<database name="portaldev" default="True" loaded_types="All">
+		<table name="dim_docket" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="docketId" primary_key="True" type_name="varchar" type="String" size="50" nullable="False" />
+			<field name="name" type_name="varchar" type="String" size="150" />
+		</table>
+		<table name="dim_emr" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="emrId" primary_key="True" type_name="varchar" type="String" size="50" nullable="False" />
+			<field name="name" type_name="varchar" type="String" size="150" />
+		</table>
+		<table name="dim_facility" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="agency" type_name="varchar" type="String" size="150" />
+			<field name="county" type_name="varchar" type="String" size="150" />
+			<field name="facilityId" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="isCt" type_name="tinyint" type="Boolean" size="1" precision="3" />
+			<field name="isHts" type_name="tinyint" type="Boolean" size="1" precision="3" />
+			<field name="isPkv" type_name="tinyint" type="Boolean" size="1" precision="3" />
+			<field name="name" type_name="varchar" type="String" size="150" />
+			<field name="ownership" type_name="varchar" type="String" size="150" />
+			<field name="partner" type_name="varchar" type="String" size="150" />
+			<field name="subCounty" type_name="varchar" type="String" size="150" />
+		</table>
+		<table name="dim_time" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="day" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="monthName" type_name="varchar" type="String" size="150" />
+			<field name="timeId" primary_key="True" type_name="datetime" type="DateTime" size="19" nullable="False" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</table>
+		<table name="dimagegroups" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="Age" type_name="varchar" type="String" size="50" />
+			<field name="DATIM_AgeGroup" type_name="varchar" type="String" size="50" />
+			<field name="MOH_AgeGroup" type_name="varchar" type="String" size="50" />
+		</table>
+		<table name="dimdate" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="DateValue" type_name="date" type="DateTime" size="10" />
+			<field name="TheDay" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="TheDayName" type_name="varchar" type="String" size="30" />
+			<field name="TheDayOfWeek" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="TheDayOfYear" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="TheFirstOfMonth" type_name="date" type="DateTime" size="10" />
+			<field name="TheISOWeek" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="TheLastOfYear" type_name="date" type="DateTime" size="10" />
+			<field name="TheMonth" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="TheMonthName" type_name="varchar" type="String" size="30" />
+			<field name="TheQuarter" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="TheWeek" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="TheYear" type_name="int" type="Int32" size="11" precision="10" />
+		</table>
+		<view name="expected_uploads" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="agency" type_name="varchar" type="String" size="150" />
+			<field name="county" type_name="varchar" type="String" size="150" />
+			<field name="docket" type_name="varchar" type="String" size="3" nullable="False" />
+			<field name="expected" type_name="bigint" type="Int64" size="21" precision="19" nullable="False" />
+			<field name="partner" type_name="varchar" type="String" size="150" />
+			<field name="subcounty" type_name="varchar" type="String" size="150" />
+		</view>
+		<table name="fact_hts_agegender" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="DATIM_AgeGroup" type_name="varchar" type="String" size="50" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Gender" type_name="longtext" type="String" size="4294967295" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="SubCounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_hts_clientselftested" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="ClientSelfTested" type_name="longtext" type="String" size="4294967295" />
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_hts_clienttestedas" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="ClientTestedAs" type_name="longtext" type="String" size="4294967295" />
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</table>
+		<table name="fact_hts_entrypoint" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="EntryPoint" type_name="longtext" type="String" size="4294967295" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_hts_monthslasttest" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthLastTest" type_name="varchar" type="String" size="12" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_hts_populationtype" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="PopulationType" type_name="varchar" type="String" size="18" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="SubCounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_hts_tbscreening" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="tbScreening" type_name="longtext" type="String" size="4294967295" />
+			<field name="tbScreening_grp" type_name="varchar" type="String" size="200" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_hts_teststrategy" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="SubCounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="TestStrategy" type_name="longtext" type="String" size="4294967295" />
+			<field name="Year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_htsuptake" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="DATIM_AgeGroup" type_name="varchar" type="String" size="50" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Gender" type_name="longtext" type="String" size="4294967295" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="TestedBefore" type_name="varchar" type="String" size="6" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_manifest" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="docketId" type_name="varchar" type="String" size="50" nullable="False" />
+			<field name="emrId" type_name="varchar" type="String" size="50" nullable="False" />
+			<field name="facilityId" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="manifestId" primary_key="True" type_name="varchar" type="String" size="36" nullable="False" />
+			<field name="timeId" type_name="datetime" type="DateTime" size="19" nullable="False" />
+			<field name="upload" type_name="bigint" type="Int64" size="20" precision="19" />
+			<foreignkey>
+				<referenced_object>
+					<name>dim_docket</name>
+					<name>portaldev</name>
+				</referenced_object>
+				<referencing_field name="docketId" referenced_field="docketId" />
+			</foreignkey>
+			<foreignkey>
+				<referenced_object>
+					<name>dim_time</name>
+					<name>portaldev</name>
+				</referenced_object>
+				<referencing_field name="timeId" referenced_field="timeId" />
+			</foreignkey>
+		</table>
+		<table name="fact_pns_children" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="Agegroup" type_name="varchar" type="String" size="5" />
+			<field name="ChildrenElicited" type_name="bigint" type="Int64" size="20" precision="19" />
+			<field name="ChildTested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Gender" type_name="longtext" type="String" size="4294967295" />
+			<field name="KnownPositive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_pns_knowledgehivstatus" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="Agegroup" type_name="varchar" type="String" size="5" />
+			<field name="ContactElicited" type_name="bigint" type="Int64" size="20" precision="19" />
+			<field name="ContactTested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Gender" type_name="longtext" type="String" size="4294967295" />
+			<field name="KnownPositive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="NewNegatives" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="NewPositives" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="UnknownStatus" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_pns_sexualpartner" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="Agegroup" type_name="varchar" type="String" size="5" />
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Gender" type_name="longtext" type="String" size="4294967295" />
+			<field name="KnownPositive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Mflcode" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="PartnersElicited" type_name="bigint" type="Int64" size="20" precision="19" />
+			<field name="PartnerTested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+		</table>
+		<table name="fact_trans_hts" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="AgeAtTesting" type_name="bigint" type="Int64" size="20" precision="19" />
+			<field name="Agency" type_name="varchar" type="String" size="100" />
+			<field name="ClientSelfTested" type_name="longtext" type="String" size="4294967295" />
+			<field name="ClientTestedAs" type_name="longtext" type="String" size="4294967295" />
+			<field name="consent" type_name="longtext" type="String" size="4294967295" />
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CoupleDiscordant" type_name="longtext" type="String" size="4294967295" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="DateEnrolled" type_name="date" type="DateTime" size="10" />
+			<field name="DisabilityType" type_name="longtext" type="String" size="4294967295" />
+			<field name="DOB" type_name="date" type="DateTime" size="10" />
+			<field name="Emr" type_name="longtext" type="String" size="4294967295" />
+			<field name="EncounterId" type_name="longtext" type="String" size="4294967295" />
+			<field name="EntryPoint" type_name="longtext" type="String" size="4294967295" />
+			<field name="EverTestedForHiv" type_name="longtext" type="String" size="4294967295" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="FinalTestResult" type_name="longtext" type="String" size="4294967295" />
+			<field name="Gender" type_name="longtext" type="String" size="4294967295" />
+			<field name="KeypopulationType" type_name="longtext" type="String" size="4294967295" />
+			<field name="Linked" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MaritalStatus" type_name="longtext" type="String" size="4294967295" />
+			<field name="MonthsLastTest" type_name="varchar" type="String" size="12" />
+			<field name="MonthsSinceLastTest" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="PatientDisabled" type_name="varchar" type="String" size="3" />
+			<field name="PatientGivenResult" type_name="longtext" type="String" size="4294967295" />
+			<field name="patientpk" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="PatientsPK" type_name="mediumtext" type="String" size="16777215" />
+			<field name="PopulationType" type_name="varchar" type="String" size="18" />
+			<field name="Positive" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="ReportedCCCNumber" type_name="longtext" type="String" size="4294967295" />
+			<field name="SiteCode" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="SubCounty" type_name="varchar" type="String" size="255" />
+			<field name="tbScreening" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestDate" type_name="date" type="DateTime" size="10" nullable="False" />
+			<field name="Tested" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="TestedBefore" type_name="varchar" type="String" size="6" />
+			<field name="TestResult1" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestResult2" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestStrategy" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestType" type_name="longtext" type="String" size="4294967295" />
+		</table>
+		<view name="hts_agegender" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="DATIM_AgeGroup" type_name="varchar" type="String" size="50" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Gender" type_name="longtext" type="String" size="4294967295" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="hts_clientselftested" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="ClientSelfTested" type_name="longtext" type="String" size="4294967295" />
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="hts_clienttestedas" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="ClientTestedAs" type_name="longtext" type="String" size="4294967295" />
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="hts_entrypoint" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="EntryPoint" type_name="longtext" type="String" size="4294967295" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="hts_monthsincelasttest" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="MonthsLastTest" type_name="varchar" type="String" size="12" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="hts_populationtype" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="PopulationType" type_name="varchar" type="String" size="18" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="hts_tbscreening" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="tbScreening" type_name="longtext" type="String" size="4294967295" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="hts_teststrategy" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="TestStrategy" type_name="longtext" type="String" size="4294967295" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="htsuptake" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="Linked" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MonthName" type_name="varchar" type="String" size="150" />
+			<field name="Positive" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="subcounty" type_name="varchar" type="String" size="255" />
+			<field name="Tested" type_name="decimal" type="Decimal" size="33" precision="32" />
+			<field name="TestedBefore" type_name="varchar" type="String" size="6" nullable="False" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="recency_uploads" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="agency" type_name="varchar" type="String" size="150" />
+			<field name="county" type_name="varchar" type="String" size="150" />
+			<field name="docket" type_name="varchar" type="String" size="3" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="partner" type_name="varchar" type="String" size="150" />
+			<field name="recency" type_name="bigint" type="Int64" size="21" precision="19" nullable="False" />
+			<field name="subcounty" type_name="varchar" type="String" size="150" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<view name="recency_uploads_befupdate" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<description>VIEW</description>
+			<field name="agency" type_name="varchar" type="String" size="150" />
+			<field name="county" type_name="varchar" type="String" size="150" />
+			<field name="docket" type_name="varchar" type="String" size="50" nullable="False" />
+			<field name="month" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="partner" type_name="varchar" type="String" size="150" />
+			<field name="recency" type_name="bigint" type="Int64" size="21" precision="19" nullable="False" />
+			<field name="year" type_name="int" type="Int32" size="11" precision="10" />
+		</view>
+		<table name="stg_hts_client_screening" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="DateExtracted" type_name="date" type="DateTime" size="10" />
+			<field name="Emr" type_name="longtext" type="String" size="4294967295" />
+			<field name="EncounterId" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="FacilityName" type_name="longtext" type="String" size="4294967295" />
+			<field name="HtsNumber" type_name="longtext" type="String" size="4294967295" />
+			<field name="PatientPk" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="Project" type_name="longtext" type="String" size="4294967295" />
+			<field name="SiteCode" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="TestKitExpiry1" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestKitExpiry2" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestKitLotNumber1" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestKitLotNumber2" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestKitName1" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestKitName2" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestResult1" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestResult2" type_name="longtext" type="String" size="4294967295" />
+		</table>
+		<table name="validate_hts_trans" loaded_types="All" referencing_foreignkeys_loaded="True">
+			<field name="AgeAtTesting" type_name="bigint" type="Int64" size="20" precision="19" />
+			<field name="Agency" type_name="varchar" type="String" size="100" />
+			<field name="ClientSelfTested" type_name="longtext" type="String" size="4294967295" />
+			<field name="ClientTestedAs" type_name="longtext" type="String" size="4294967295" />
+			<field name="consent" type_name="longtext" type="String" size="4294967295" />
+			<field name="County" type_name="varchar" type="String" size="255" />
+			<field name="CoupleDiscordant" type_name="longtext" type="String" size="4294967295" />
+			<field name="CTPartner" type_name="varchar" type="String" size="200" />
+			<field name="DateEnrolled" type_name="date" type="DateTime" size="10" />
+			<field name="DisabilityType" type_name="longtext" type="String" size="4294967295" />
+			<field name="DOB" type_name="date" type="DateTime" size="10" />
+			<field name="Emr" type_name="longtext" type="String" size="4294967295" />
+			<field name="EncounterId" type_name="longtext" type="String" size="4294967295" />
+			<field name="EntryPoint" type_name="longtext" type="String" size="4294967295" />
+			<field name="EverTestedForHiv" type_name="longtext" type="String" size="4294967295" />
+			<field name="FacilityName" type_name="varchar" type="String" size="255" />
+			<field name="FinalTestResult" type_name="longtext" type="String" size="4294967295" />
+			<field name="Gender" type_name="longtext" type="String" size="4294967295" />
+			<field name="KeypopulationType" type_name="longtext" type="String" size="4294967295" />
+			<field name="Linked" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="MaritalStatus" type_name="longtext" type="String" size="4294967295" />
+			<field name="MonthsLastTest" type_name="varchar" type="String" size="12" />
+			<field name="MonthsSinceLastTest" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="PatientDisabled" type_name="varchar" type="String" size="3" />
+			<field name="PatientGivenResult" type_name="longtext" type="String" size="4294967295" />
+			<field name="patientpk" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="PatientsPK" type_name="mediumtext" type="String" size="16777215" />
+			<field name="PopulationType" type_name="varchar" type="String" size="18" />
+			<field name="Positive" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="project" type_name="longtext" type="String" size="4294967295" />
+			<field name="ReportedCCCNumber" type_name="longtext" type="String" size="4294967295" />
+			<field name="SiteCode" type_name="int" type="Int32" size="11" precision="10" nullable="False" />
+			<field name="SubCounty" type_name="varchar" type="String" size="255" />
+			<field name="tbScreening" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestDate" type_name="date" type="DateTime" size="10" nullable="False" />
+			<field name="Tested" type_name="int" type="Int32" size="11" precision="10" />
+			<field name="TestedBefore" type_name="varchar" type="String" size="6" />
+			<field name="TestResult1" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestResult2" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestStrategy" type_name="longtext" type="String" size="4294967295" />
+			<field name="TestType" type_name="longtext" type="String" size="4294967295" />
+		</table>
+	</database>
+</metadata>
