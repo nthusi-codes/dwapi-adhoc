@@ -114,8 +114,11 @@
      <script src="./js/app-utils.js"></script>
     <script>
 
-        var baseUrl="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")"
-        var flexKey="@Configuration["FlexKey"]"
+        //var baseUrl = "@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")"
+        var baseUrl = window.location.href;
+        console.log(baseUrl);
+
+        var flexKey = "@Configuration["FlexKey"]";
         var instanceId = 'QueryResults';
 
          function uuidv4() {
