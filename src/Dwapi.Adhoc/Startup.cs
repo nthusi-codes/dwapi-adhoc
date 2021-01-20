@@ -126,8 +126,8 @@ namespace Dwapi.Adhoc
                 builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
             });
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

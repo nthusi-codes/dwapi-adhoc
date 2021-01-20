@@ -16,7 +16,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Dwapi.Adhoc.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class HomeController : Controller
     {
         private readonly IAdhocManager _adhocManager;
@@ -32,8 +32,9 @@ namespace Dwapi.Adhoc.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string token)
         {
+            string name = token;
             return RedirectToAction("Index", "QueryResultsDemo");
             return View();
         }
@@ -47,6 +48,7 @@ namespace Dwapi.Adhoc.Controllers
         public IActionResult RefreshMeta()
         {
             _adhocManager.RefreshMetadata(GetDatabasePath(), GetMetaDataPath());
+            // _adhocManager.RefreshMetadataHts(GetDatabasePathHts(), GetMetaDataPathHts());
             return Ok(new {Status = "MetasRefreshed"});
         }
 
@@ -60,10 +62,20 @@ namespace Dwapi.Adhoc.Controllers
             var con = _configuration.GetConnectionString("SourceConnection");
             return con;
         }
+        private string GetDatabasePathHts()
+        {
+            var con = _configuration.GetConnectionString("HtsSourceConnection");
+            return con;
+        }
 
         private string GetMetaDataPath()
         {
             var con = Path.Combine(_env.ContentRootPath,_configuration["XMLMetadata"]);
+            return con;
+        }
+        private string GetMetaDataPathHts()
+        {
+            var con = Path.Combine(_env.ContentRootPath, _configuration["XMLMetadata"].Replace("/portaldev.xml", "/portaldevhts.xml"));
             return con;
         }
     }
