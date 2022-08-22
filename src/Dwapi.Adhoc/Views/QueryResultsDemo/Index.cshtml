@@ -11,6 +11,7 @@
         <li><a class="nav-link active" href="#qb">Step 1 - Build Query</a></li>
         <li><a class="nav-link" href="#qr">Step 2 - View Results</a></li>
         <li><a class="nav-link" href="#pv">Step 3 -Pivot Results</a></li>
+        <li><a class="nav-link" href="#cube">Cude</a></li>
     </ul>
     <div class="row" id="qb">
         <div class="col-md-12">
@@ -68,6 +69,12 @@
         <div class="col-md-12">
             <div class="alert alert-danger"></div>
             <div id="flexm">Pivot Resluts...</div>
+        </div>
+    </div>
+    <div class="row" id="cube">
+        <div class="col-md-12">
+            <div class="alert alert-danger"></div>
+            <div id="flexcube">Cube Resluts...</div>
         </div>
     </div>
 </div>
@@ -167,6 +174,23 @@
                          dataSource: {
                              dataSourceType: "json",
                              filename: jsonDataz
+                         }
+                     }
+                 });
+             });
+             $('[href="#cube"]').click(function () {
+                 var pivot = new Flexmonster({
+                     container: "flexcube",
+                     licenseKey: flexKey,
+                     componentFolder: "flexmonster/",
+                     toolbar: true,
+                     report: {
+                         dataSource: {
+                             type:"microsoft analysis services",
+                             proxyUrl: "http://10.230.50.62:50005",
+                             catalog: "PalladiumBI_dmugo_352ec3e4-7a6f-494c-9ace-80da61ec8162",
+                             cube: "Model",
+                             binary: true 
                          }
                      }
                  });
